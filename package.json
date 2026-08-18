@@ -9,7 +9,7 @@
     "regenerar": "python3 tools/descargar.py && python3 tools/generar.py"
   },
   "dependencies": {
-    "next": "^15.5.7",
+    "next": "15.5.9",
     "react": "19.1.1",
     "react-dom": "19.1.1"
   },
