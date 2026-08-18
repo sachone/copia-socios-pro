@@ -10,13 +10,21 @@ type Props = {
   scripts?: string[];
 };
 
+/** JSON seguro para incrustar dentro de un <script>: neutraliza "</script>". */
+function safeJson(value: unknown): string {
+  return JSON.stringify(value).replaceAll("<", "\\u003c");
+}
+
 export default function PageBody({ html, bodyClass, scripts }: Props) {
   return (
     <>
-      {/* Aplica las clases de <body> ya en el primer pintado (sin parpadeo). */}
+      {/* Aplica las clases de <body> ya en el primer pintado (sin parpadeo).
+          JSON.stringify() no escapa "</script>": si `bodyClass` llegara a
+          contenerlo (viene del scrape del original, ver tools/generar.py), el
+          navegador cerraria el script ahi y lo que siguiera seria marcado. */}
       <script
         dangerouslySetInnerHTML={{
-          __html: `document.body.className=${JSON.stringify(bodyClass)};`,
+          __html: `document.body.className=${safeJson(bodyClass)};`,
         }}
       />
       <div dangerouslySetInnerHTML={{ __html: html }} />

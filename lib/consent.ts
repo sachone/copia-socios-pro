@@ -44,17 +44,22 @@ export function readConsent(): Consent | null {
   }
 }
 
+// `Secure` solo cuando la pagina ya va por https: en local (http://localhost)
+// el navegador descartaria la cookie y el banner reapareceria en cada carga.
+const SECURE_FLAG =
+  typeof location !== "undefined" && location.protocol === "https:" ? "; Secure" : "";
+
 export function writeConsent(choice: { analytics: boolean; marketing: boolean }): void {
   const consent: Consent = { necessary: true, ...choice, decidedAt: new Date().toISOString() };
   document.cookie =
     `${COOKIE_NAME}=${encodeURIComponent(JSON.stringify(consent))}; ` +
-    `max-age=${COOKIE_MAX_AGE}; path=/; SameSite=Lax`;
+    `max-age=${COOKIE_MAX_AGE}; path=/; SameSite=Lax${SECURE_FLAG}`;
   window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: consent }));
 }
 
 /** Borra la decisión guardada: la próxima carga vuelve a mostrar el banner. */
 export function resetConsent(): void {
-  document.cookie = `${COOKIE_NAME}=; max-age=0; path=/`;
+  document.cookie = `${COOKIE_NAME}=; max-age=0; path=/; SameSite=Lax${SECURE_FLAG}`;
   window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: null }));
 }
 

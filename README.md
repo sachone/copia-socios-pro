@@ -25,17 +25,21 @@ npm run build && npm start
 | `public/fonts/` | Poppins, Roboto y Roboto Slab, ya recortadas a los pesos que se usan de verdad |
 | `public/images/` | Todas las imágenes del sitio, descargadas del original en vez de enlazadas |
 | `public/widgets/` | El JS que Elementor lleva incrustado en algún widget HTML |
+| `public/widgets/vendor/` | Copia local del JS de terceros que cargaba algún widget (Tailwind) |
 | `app/api/contact/route.ts` | Backend real del formulario de contacto (Resend) |
 | `components/CookieConsent.tsx` | Banner de consentimiento de cookies (RGPD) |
 | `lib/consent.ts` | Estado de consentimiento: `useConsent()` / `hasConsent()` para gatear scripts futuros |
+| `lib/rate-limit.ts` | Límite de tasa en memoria que protege `/api/contact` |
 | `lib/site-url.ts` | Resuelve el dominio real del despliegue (para metadatos y JSON-LD) |
 | `tools/` | Los scripts que descargan el original y regeneran todo lo anterior |
 
 Todo lo que hay en `app/*/page.tsx` (excepto `app/api/`), `content/`, `styles/shared/`,
-`styles/pages/`, `public/fonts/`, `public/images/`, `public/widgets/`, `lib/routes.json`,
+`styles/pages/`, `public/fonts/`, `public/images/`, `public/widgets/` (incluida
+`vendor/`), `lib/routes.json`,
 `lib/preload-fonts.json` y `lib/favicons.json` **está generado**: no lo edites a mano, se
 sobrescribe. Lo escrito a mano es `app/layout.tsx`, `app/api/`, `components/`,
-`lib/consent.ts`, `lib/site-url.ts`, `styles/site-overrides.css` y `tools/`.
+`lib/consent.ts`, `lib/rate-limit.ts`, `lib/site-url.ts`, `styles/site-overrides.css`
+y `tools/`.
 
 ## Regenerar desde el original
 
@@ -140,9 +144,24 @@ vez de fallar en silencio o intentar mandar un email que no puede.
 dominio de socios.pro, que no sirve para este). Si lo quieres, la forma más
 sencilla es [reCAPTCHA v2/v3 de Google](https://www.google.com/recaptcha/admin)
 o [Cloudflare Turnstile]: se verifica el token en `app/api/contact/route.ts`
-antes de llamar a Resend. Mientras tanto, hay un honeypot (un campo oculto que
-los bots que rellenan formularios a ciegas suelen completar) que frena el spam
-más básico sin fricción para quien lo rellena de verdad.
+antes de llamar a Resend.
+
+Mientras tanto, al ser el único punto del sitio que acepta datos de fuera y que
+además gasta cuota de Resend, el endpoint lleva cinco filtros (todos en
+`app/api/contact/route.ts`):
+
+| Filtro | Qué hace |
+|---|---|
+| Mismo origen | Rechaza los POST cuyo `Origin` no es el propio sitio: un `<form>` en otro dominio puede enviar aquí sin que el navegador lo impida |
+| Tamaño | Descarta cuerpos de más de 32 KB antes de leerlos, y campos de más de 5.000 caracteres |
+| Tasa por IP | 20 peticiones cada 10 min, y 5 envíos reales por hora — validar mal el formulario no gasta cupo de envíos |
+| Techo global | 100 envíos/hora por instancia, por si el abuso viene repartido entre muchas IPs |
+| Honeypot | Un campo oculto que los bots que rellenan a ciegas suelen completar |
+
+El límite de tasa (`lib/rate-limit.ts`) es **en memoria**: en Vercel cada
+instancia lleva su propia cuenta, así que frena en seco el abuso trivial pero
+no un ataque muy repartido. Si algún día hiciera falta esa garantía, se
+sustituye ese módulo por Vercel KV o Upstash manteniendo la misma firma.
 
 ## Banner de cookies
 
@@ -172,6 +191,46 @@ normativa, no vale "todo activado salvo que la persona diga que no"—.
   ```
 
   Móntalo en `app/layout.tsx` junto a `<CookieConsent />`.
+
+## Seguridad
+
+**Cabeceras.** `next.config.ts` las pone en todas las rutas. La que más pesa
+aquí es la **CSP**: como el cuerpo de las 50 páginas se inyecta con
+`dangerouslySetInnerHTML`, es la red de seguridad si una regeneración trajera
+del original algo que no debería. Está en `'self'` para script, estilos,
+imágenes y tipografías, con `object-src 'none'`, `base-uri 'self'`,
+`form-action 'self'` y `frame-ancestors 'none'`.
+
+Lleva `'unsafe-inline'` en `script-src` y `style-src`, y conviene saber por
+qué: el marcado de Elementor trae atributos `style=` y bloques `<style>`, y
+hay dos scripts en línea propios (las clases de `<body>` en `PageBody.tsx` y
+el JSON-LD en `layout.tsx`). Quitar esa concesión pide un *nonce*, y un nonce
+obliga a renderizar cada página en cada petición — justo lo que este clon
+evita. Aun con ella, la cabecera sigue bloqueando lo importante: cargar script
+de un dominio ajeno, `<object>`/`<embed>`, mover el `<base>`, mandar
+formularios fuera y que nos metan en un iframe. Las acompañan
+`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`,
+`Permissions-Policy` y, solo en producción, `Strict-Transport-Security`.
+
+**Nada se carga de terceros.** Además de las imágenes y las tipografías, se
+traen al sitio las dos cosas que el original cargaba de fuera en
+`/planes-y-precios/`: el JS de Tailwind (`cdn.tailwindcss.com`) y la
+tipografía Inter (Google Fonts). Un `<script>` de otro dominio se ejecuta con
+todos los permisos sobre la página, así que si ese CDN cayera o le tocaran el
+fichero se lo comerían todas las visitas; y la tipografía remota le entregaba
+a Google la IP de cada visita sin haber consentido nada, que es justo lo que
+el banner de cookies existe para evitar. Lo hace `tools/generar.py`
+(`localize_google_font_css()` y el bloque de `vendor/`), así que sobrevive a
+las regeneraciones.
+
+**Scripts en línea.** Tanto las clases de `<body>` como el JSON-LD escapan el
+`<` a `\u003c` antes de incrustarse: `JSON.stringify()` no neutraliza un
+`</script>`, y ese texto viene del volcado del original.
+
+**Al regenerar, mira el diff.** `tools/generar.py` mete en las 50 páginas el
+HTML y el JS del original tal cual. Si socios.pro estuviera comprometido el
+día que lo ejecutas, eso entra en el clon sin que nada lo detecte. Revisa el
+`git diff` de `content/`, `public/widgets/` y `styles/` antes de commitear.
 
 ## Lo que no se ha replicado
 

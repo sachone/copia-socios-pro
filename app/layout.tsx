@@ -33,7 +33,11 @@ export const metadata: Metadata = {
 // (/images/...), pero schema.org exige URLs absolutas: se completan aqui con
 // el dominio real, resuelto en tiempo de ejecucion (ver lib/site-url.ts) en
 // vez de quedar fijado al generar el sitio.
-const jsonldAbsolute = jsonld.raw.replaceAll('"/images/', `"${SITE_URL}/images/`);
+const jsonldAbsolute = jsonld.raw
+  .replaceAll('"/images/', `"${SITE_URL}/images/`)
+  // Neutraliza un "</script>" que viniera dentro del JSON-LD: cerraria el
+  // bloque antes de tiempo y el resto se interpretaria como marcado.
+  .replaceAll("<", "\\u003c");
 
 // Clases de <body> comunes a todas las paginas. Cada pagina anade las suyas
 // (ver `BODY_CLASS` en cada `page.tsx`).

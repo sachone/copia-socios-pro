@@ -37,6 +37,7 @@ import json
 import os
 import re
 import shutil
+import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
@@ -401,8 +402,55 @@ def build_css(items, head, needed_fonts):
     return "\n\n".join(out)
 
 
+# Google sirve woff2 solo si el User-Agent le parece un navegador moderno; con
+# el de urllib devuelve ttf, mucho mas pesado.
+UA_MODERNO = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+              "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+
+_GOOGLE_CSS_CACHE = {}
+
+
+def localize_google_font_css(url):
+    """Descarga una hoja de Google Fonts y devuelve sus @font-face ya
+    localizados.
+
+    El original deja un <link> a fonts.googleapis.com. Servirlo asi tiene dos
+    pegas: el sitio deja de ser autonomo (era el motivo de bajar imagenes y
+    tipografias, ver localize_images/localize_fonts) y cada visita le entrega
+    su IP a Google sin haber consentido nada, que es justo lo que el banner de
+    components/CookieConsent.tsx existe para evitar. Asi que se hace lo mismo
+    que con las demas: recortar al subconjunto latino sin cursiva y traerse
+    los .woff2 a public/fonts.
+    """
+    if url in _GOOGLE_CSS_CACHE:
+        return _GOOGLE_CSS_CACHE[url]
+
+    req = urllib.request.Request(url, headers={"User-Agent": UA_MODERNO})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        css = r.read().decode("utf-8")
+
+    def local_url(m):
+        font_url = m.group(1)
+        FONTS.add(font_url)
+        return "url(/fonts/%s)" % font_url.rsplit("/", 1)[-1]
+
+    blocks = []
+    for block in re.findall(r"@font-face\s*\{[^}]*\}", css):
+        if re.search(r"font-style:\s*italic", block):
+            continue
+        # "U+0000-00FF" identifica el subconjunto latino, que ya cubre los
+        # acentos y la ñ del español (mismo criterio que subset_google_font_css).
+        if "U+0000-00FF" not in block:
+            continue
+        blocks.append(re.sub(r"url\((https://fonts\.gstatic\.com/[^)]+)\)", local_url, block))
+
+    _GOOGLE_CSS_CACHE[url] = "\n".join(blocks)
+    return _GOOGLE_CSS_CACHE[url]
+
+
 def external_font_imports(head):
-    """Hojas externas (Google Fonts) que WP Rocket sube al <head>."""
+    """Hojas externas (Google Fonts) que WP Rocket sube al <head>, ya traidas
+    al sitio (ver localize_google_font_css)."""
     urls = re.findall(r'<link[^>]*href="(https://fonts\.googleapis\.com/[^"]+)"[^>]*rel="stylesheet"', head)
     urls += re.findall(r'<link[^>]*rel="stylesheet"[^>]*href="(https://fonts\.googleapis\.com/[^"]+)"', head)
     seen = []
@@ -410,10 +458,23 @@ def external_font_imports(head):
         url = htmlmod.unescape(url)
         if url not in seen:
             seen.append(url)
-    return "\n".join('@import url("%s");' % u for u in seen)
+    return "\n".join(b for b in (localize_google_font_css(u) for u in seen) if b)
 
 
 # ------------------------------------------------- scripts de widgets HTML
+
+def vendor_script_name(url):
+    """Nombre local para un script de terceros. `https://cdn.tailwindcss.com`
+    no tiene ruta, asi que en ese caso el nombre sale del dominio."""
+    parsed = urllib.parse.urlparse(url)
+    base = os.path.basename(parsed.path)
+    if not base:
+        partes = [p for p in parsed.netloc.split(".") if p not in ("www", "cdn", "com", "org", "net")]
+        base = partes[-1] if partes else "vendor"
+    if not base.endswith(".js"):
+        base += ".js"
+    return re.sub(r"[^A-Za-z0-9._-]", "-", base)
+
 
 # Fontaneria de WordPress y sus plugins: nada de esto hace falta en el clon.
 NOISE = ("rocket_pairs", "lazyLoadThumb", "lazyloadRunObserver", "wpr_", "wprRemoveCPCSS",
@@ -689,6 +750,30 @@ def main():
     out_widgets = os.path.join(ROOT, "public", "widgets")
     shutil.rmtree(out_widgets, ignore_errors=True)
     os.makedirs(out_widgets, exist_ok=True)
+
+    # --- JS de terceros que cargaban algunos widgets (la tabla comparativa de
+    # /planes-y-precios/ tira de Tailwind). Se trae al sitio en vez de dejarlo
+    # apuntando a su CDN: un <script> de un dominio ajeno se ejecuta con todos
+    # los permisos sobre la pagina, asi que si ese CDN cayera o le tocaran el
+    # fichero, se lo comerian todas las visitas. Ademas, sirviendolo desde el
+    # propio dominio, la CSP de next.config.ts puede quedarse en 'self' sin
+    # tener que abrir la mano a hosts externos.
+    vendor_dir = os.path.join(out_widgets, "vendor")
+    os.makedirs(vendor_dir, exist_ok=True)
+    vendored = {}
+    for page in pages.values():
+        for url in page["ext_scripts"]:
+            if not url.startswith(("http://", "https://")) or url in vendored:
+                continue
+            nombre = vendor_script_name(url)
+            req = urllib.request.Request(url, headers={"User-Agent": UA_MODERNO})
+            with urllib.request.urlopen(req, timeout=60) as r:
+                datos = r.read()
+            banner = ("// Copia local de %s, descargada por tools/generar.py.\n"
+                      "// No editar a mano: se sobrescribe en cada regeneracion.\n"
+                      % url).encode("utf-8")
+            open(os.path.join(vendor_dir, nombre), "wb").write(banner + datos)
+            vendored[url] = "/widgets/vendor/" + nombre
     for key, page in pages.items():
         if not page["inline_scripts"]:
             continue
@@ -714,7 +799,7 @@ def main():
     for key, page in pages.items():
         folder = os.path.join(ROOT, "app") if key == "index" else os.path.join(ROOT, "app", key)
         os.makedirs(folder, exist_ok=True)
-        scripts = list(page["ext_scripts"])
+        scripts = [vendored.get(u, u) for u in page["ext_scripts"]]
         if page["inline_scripts"]:
             scripts.append("/widgets/%s.js" % key)
         open(os.path.join(folder, "page.tsx"), "w", encoding="utf-8").write(
@@ -734,6 +819,8 @@ def main():
     print("css especifico por pagina: %.0f KB de media" % media_kb)
     print("tipografias localizadas en public/fonts: %d ficheros" % len(FONTS))
     print("imagenes descargadas a public/images: %d ficheros" % len(IMAGES))
+    if vendored:
+        print("scripts de terceros traidos a public/widgets/vendor: %d" % len(vendored))
 
 
 if __name__ == "__main__":
