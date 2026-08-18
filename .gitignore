@@ -4,6 +4,9 @@ out
 next-env.d.ts
 .DS_Store
 
+# Credenciales locales (RESEND_API_KEY, etc.) — ver .env.example
+.env*.local
+
 # Volcado del sitio original: lo rehace tools/descargar.py
 tools/.cache/
 tsconfig.tsbuildinfo

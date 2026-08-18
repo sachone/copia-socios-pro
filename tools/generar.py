@@ -20,12 +20,15 @@ Escribe (sobrescribiendo lo que hubiera):
     styles/pages/*.css      solo lo que de verdad es propio de cada pagina
     public/fonts/           las tipografias, ya recortadas a los pesos usados
                              (el origen las sirve sin CORS, hay que autoalojarlas)
+    public/images/          todas las imagenes referenciadas, descargadas del
+                             original en vez de enlazadas
     public/widgets/*.js     el JS incrustado en widgets HTML de Elementor
     lib/routes.json         indice de rutas, que alimenta el sitemap
     lib/preload-fonts.json  que tipografias precargar en app/layout.tsx
+    lib/favicons.json       los favicons, para app/layout.tsx
 
-Lo unico que se escribe a mano es components/, app/layout.tsx y
-styles/site-overrides.css.
+Lo unico que se escribe a mano es components/, app/layout.tsx,
+lib/site-url.ts y styles/site-overrides.css.
 """
 import glob
 import hashlib
@@ -81,8 +84,9 @@ def unlazy(match):
 
 def internalize_links(html):
     """Los enlaces al propio dominio pasan a ser rutas relativas, para que la
-    navegacion se quede dentro del clon. Las imagenes y los ficheros de
-    /wp-content siguen apuntando al original."""
+    navegacion se quede dentro del clon. Los ficheros de /wp-content que no
+    sean imagenes (por ejemplo si quedara algun CSS/JS suelto) siguen
+    apuntando al original; las imagenes las trata `localize_images()`."""
     def repl(m):
         attr, path = m.group(1), m.group(2)
         if path.startswith(("/wp-content/", "/wp-admin/", "/wp-json/", "/wp-includes/", "/feed")):
@@ -90,6 +94,27 @@ def internalize_links(html):
         return '%s="%s"' % (attr, path or "/")
 
     return re.sub(r'\b(href|action)="%s([^"]*)"' % re.escape(ORIGIN), repl, html)
+
+
+# ---------------------------------------------------------------- imagenes
+
+IMAGES = set()  # rutas relativas a /wp-content/uploads/, sin el propio prefijo
+IMAGE_RE = re.compile(
+    r"https://socios\.pro/wp-content/uploads/([^\"'\s\\)]+\.(?:webp|jpe?g|png|gif|svg))", re.I
+)
+
+
+def localize_images(text):
+    """Las imagenes se descargan a public/images/ (en vez de enlazarlas al
+    original) para que el sitio sea autonomo. Se usa la misma ruta que tenian
+    en /wp-content/uploads/ para no chocar entre ficheros del mismo nombre
+    subidos en fechas distintas."""
+    def repl(m):
+        rel = m.group(1)
+        IMAGES.add(rel)
+        return "/images/%s" % rel
+
+    return IMAGE_RE.sub(repl, text)
 
 
 def strip_nested_document(html):
@@ -110,8 +135,15 @@ def clean(html):
     html = re.sub(r'(\sclass="[^"]*?)\s*\brocket-lazyload\b', r"\1", html)
     html = RE_COMMENT.sub("", html)
     html = internalize_links(html)
+    html = localize_images(html)
     # El banner de cookies (Complianz) depende de su propio JS: se elimina.
     html = re.sub(r'<div id="cmplz-cookiebanner-container">.*', "", html, flags=re.S)
+    # El patron del campo telefono es una regex invalida en el modo "v" de
+    # los navegadores modernos (error en consola en cada envio, aunque no
+    # llega a bloquear el formulario). Es un fallo del propio original que no
+    # se arregla reordenando caracteres -se probo y sigue rechazandola-, asi
+    # que se quita: `type="tel"` ya basta como pista semantica del campo.
+    html = re.sub(r'\s*pattern="\[0-9\(\)#&amp;\+\*-=\.\]\+"\s*title="Only numbers[^"]*"', "", html)
     return strip_nested_document(html).strip()
 
 
@@ -181,7 +213,7 @@ def metadata_block(meta, route):
                 if og.get(prop):
                     out.append("    %s: %s," % (key, ts(og[prop])))
         if og.get("og:image"):
-            image = {"url": og["og:image"]}
+            image = {"url": localize_images(og["og:image"])}
             for key, prop in (("width", "og:image:width"), ("height", "og:image:height")):
                 if og.get(prop):
                     image[key] = int(og[prop])
@@ -272,6 +304,22 @@ FONTS = set()
 FONT_RE = re.compile(
     r"url\((['\"]?)(https://socios\.pro/[^)'\"]+\.(?:woff2|woff|ttf|eot|otf))([^)'\"]*)\1\)", re.I
 )
+
+
+def extract_favicons(head):
+    """Los favicons se referencian a mano en app/layout.tsx (no se regenera),
+    asi que aqui se localizan y se vuelcan a lib/favicons.json: layout.tsx los
+    importa, y asi nunca quedan desincronizados si el original cambia de icono."""
+    favicons = {"icons": []}
+    for m in re.finditer(r'<link rel="icon" href="([^"]+)" sizes="([^"]+)"', head):
+        favicons["icons"].append({"url": localize_images(m.group(1)), "sizes": m.group(2)})
+    m = re.search(r'<link rel="apple-touch-icon" href="([^"]+)"', head)
+    if m:
+        favicons["apple"] = localize_images(m.group(1))
+    m = re.search(r'<meta name="msapplication-TileImage" content="([^"]+)"', head)
+    if m:
+        favicons["tile"] = localize_images(m.group(1))
+    return favicons
 
 
 def pick_preload_font(css, weight):
@@ -470,7 +518,10 @@ def main():
             footer_html = clean(footer)
 
         meta = extract_meta(head)
-        jsonld = jsonld or meta["schema_raw"]
+        # El JSON-LD trae comentarios `//`, no es JSON valido: se localiza como
+        # texto. La URL del logo queda relativa (/images/...); layout.tsx la
+        # completa con el dominio real en tiempo de ejecucion (ver SITE_URL).
+        jsonld = jsonld or (localize_images(meta["schema_raw"]) if meta["schema_raw"] else None)
         raw_items = [tuple(x) for x in order["__home" if key == "index" else key]]
         pages[key] = {
             "route": route_of(key),
@@ -578,6 +629,30 @@ def main():
 
     print("variantes de Astra deduplicadas: %d ficheros para %d paginas" % (len(astra_variants), len(pages)))
 
+    # --- favicons (se referencian a mano en app/layout.tsx via este JSON)
+    favicons = extract_favicons(pages["index"]["head"])
+    json.dump(favicons, open(os.path.join(ROOT, "lib", "favicons.json"), "w", encoding="utf-8"))
+
+    # --- imagenes: se descargan a public/images/ en vez de enlazarlas al
+    # original (ver localize_images e IMAGES, que se han ido rellenando al
+    # limpiar cada pagina, el header/footer, los og:image y el JSON-LD).
+    # Se preserva la ruta que tenian bajo /wp-content/uploads/ para no chocar
+    # entre ficheros del mismo nombre subidos en carpetas de fecha distintas.
+    out_images = os.path.join(ROOT, "public", "images")
+    shutil.rmtree(out_images, ignore_errors=True)
+    os.makedirs(out_images, exist_ok=True)
+
+    def fetch_image(rel):
+        dest = os.path.join(out_images, rel)
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        url = ORIGIN + "/wp-content/uploads/" + rel
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            open(dest, "wb").write(r.read())
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        list(pool.map(fetch_image, sorted(IMAGES)))
+
     # --- tipografias: solo las que de verdad hacen falta (ver
     # subset_google_font_css). Se limpia la carpeta antes de escribir para no
     # dejar sueltos ficheros de un recorte anterior menos agresivo.
@@ -658,6 +733,7 @@ def main():
     print("styles/shared/common.css: %.0f KB (una sola descarga, cacheada en toda la navegacion)" % common_kb)
     print("css especifico por pagina: %.0f KB de media" % media_kb)
     print("tipografias localizadas en public/fonts: %d ficheros" % len(FONTS))
+    print("imagenes descargadas a public/images: %d ficheros" % len(IMAGES))
 
 
 if __name__ == "__main__":

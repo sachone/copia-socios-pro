@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     type: "article",
     publishedTime: "2026-02-12T08:33:45+00:00",
     modifiedTime: "2026-06-01T11:29:44+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/11/Automatizacion-de-cuotas-y-donaciones-en-una-asociacion.webp", "width": 1536, "height": 1024, "type": "image/webp"}],
+    images: [{"url": "/images/2025/11/Automatizacion-de-cuotas-y-donaciones-en-una-asociacion.webp", "width": 1536, "height": 1024, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

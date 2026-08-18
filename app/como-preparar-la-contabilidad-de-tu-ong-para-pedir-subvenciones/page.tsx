@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     type: "article",
     publishedTime: "2025-12-27T15:31:16+00:00",
     modifiedTime: "2026-06-01T11:27:54+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/11/Preparar-contabilidad-para-subvenciones-ONG.webp", "width": 1536, "height": 1024, "type": "image/webp"}],
+    images: [{"url": "/images/2025/11/Preparar-contabilidad-para-subvenciones-ONG.webp", "width": 1536, "height": 1024, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

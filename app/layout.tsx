@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CookieConsent from "@/components/CookieConsent";
 import jsonld from "@/content/jsonld.json";
 import preloadFonts from "@/lib/preload-fonts.json";
+import favicons from "@/lib/favicons.json";
+import { SITE_URL } from "@/lib/site-url";
 
 // El CSS identico en las 50 paginas (tema Astra, Elementor, tipografias, kit
 // global) vive aqui: al importarse desde el layout raiz, Next.js lo sirve
@@ -12,23 +15,25 @@ import preloadFonts from "@/lib/preload-fonts.json";
 import "@/styles/shared/common.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://socios.pro"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Software gestión asociaciones. Programa de contabilidad",
     template: "%s",
   },
   icons: {
-    icon: [
-      { url: "https://socios.pro/wp-content/uploads/2025/06/favicon_sociospro-150x150.webp", sizes: "32x32" },
-      { url: "https://socios.pro/wp-content/uploads/2025/06/favicon_sociospro.webp", sizes: "192x192" },
-    ],
-    apple: "https://socios.pro/wp-content/uploads/2025/06/favicon_sociospro.webp",
+    icon: favicons.icons.map((i) => ({ url: i.url, sizes: i.sizes })),
+    apple: favicons.apple,
   },
   other: {
-    "msapplication-TileImage":
-      "https://socios.pro/wp-content/uploads/2025/06/favicon_sociospro.webp",
+    "msapplication-TileImage": favicons.tile,
   },
 };
+
+// El JSON-LD (ver content/jsonld.json) trae las imagenes ya en rutas locales
+// (/images/...), pero schema.org exige URLs absolutas: se completan aqui con
+// el dominio real, resuelto en tiempo de ejecucion (ver lib/site-url.ts) en
+// vez de quedar fijado al generar el sitio.
+const jsonldAbsolute = jsonld.raw.replaceAll('"/images/', `"${SITE_URL}/images/`);
 
 // Clases de <body> comunes a todas las paginas. Cada pagina anade las suyas
 // (ver `BODY_CLASS` en cada `page.tsx`).
@@ -41,7 +46,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es">
       <head>
-        <link rel="preconnect" href="https://socios.pro" crossOrigin="" />
         {/* Solo se precargan las 2 tipografias mas criticas -titular y texto-,
             no las 5 que se usan en total: precargarlas todas competiria por
             ancho de banda con la propia imagen de portada. Los nombres los
@@ -68,7 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Datos estructurados del original (identicos en las 47 URLs). */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonld.raw }}
+          dangerouslySetInnerHTML={{ __html: jsonldAbsolute }}
         />
       </head>
       <body
@@ -91,6 +95,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <Footer />
         </div>
+        <CookieConsent />
       </body>
     </html>
   );

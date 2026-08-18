@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: "es_ES",
     type: "article",
     publishedTime: "2026-07-07T10:00:58+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2026/07/auditoria_economica_asociaciones.webp", "width": 1536, "height": 1024, "type": "image/webp"}],
+    images: [{"url": "/images/2026/07/auditoria_economica_asociaciones.webp", "width": 1536, "height": 1024, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

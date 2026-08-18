@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: "es_ES",
     type: "article",
     modifiedTime: "2025-11-21T13:51:32+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/06/contabilidad_asociaciones_falleras.webp", "width": 459, "height": 544, "type": "image/webp"}],
+    images: [{"url": "/images/2025/06/contabilidad_asociaciones_falleras.webp", "width": 459, "height": 544, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

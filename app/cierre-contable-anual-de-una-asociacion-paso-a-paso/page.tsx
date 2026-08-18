@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     type: "article",
     publishedTime: "2026-01-08T09:40:26+00:00",
     modifiedTime: "2026-06-01T11:28:24+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/11/Cierre-contable-de-fin-de-ano-en-la-asociacion.webp", "width": 1536, "height": 1024, "type": "image/webp"}],
+    images: [{"url": "/images/2025/11/Cierre-contable-de-fin-de-ano-en-la-asociacion.webp", "width": 1536, "height": 1024, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

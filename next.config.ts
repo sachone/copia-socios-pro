@@ -3,9 +3,6 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // El sitio original sirve todas sus URLs con barra final (https://socios.pro/que-es/)
   trailingSlash: true,
-  images: {
-    remotePatterns: [{ protocol: "https", hostname: "socios.pro" }],
-  },
   async redirects() {
     return [
       // El original responde 301 en esta URL antigua.
@@ -27,6 +24,13 @@ const nextConfig: NextConfig = {
         // que hay dentro sin cambiar la URL. Cache corta con revalidación en
         // segundo plano, en vez de "immutable".
         source: "/widgets/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" }],
+      },
+      {
+        // Igual que /widgets/: el nombre lo pone WordPress (no es un hash de
+        // contenido), así que si el original cambia una imagen sin renombrarla
+        // conviene revalidar en vez de fiarse para siempre.
+        source: "/images/:path*",
         headers: [{ key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" }],
       },
     ];

@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: "es_ES",
     type: "article",
     modifiedTime: "2025-12-04T11:45:10+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/04/contabilidad_sin_animo_de_lucro.webp"}],
+    images: [{"url": "/images/2025/04/contabilidad_sin_animo_de_lucro.webp"}],
   },
   twitter: {
     card: "summary_large_image",

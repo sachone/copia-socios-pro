@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: "es_ES",
     type: "article",
     modifiedTime: "2025-11-21T14:47:47+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/04/empresas_sin_animo_de_lucro.webp", "width": 512, "height": 512, "type": "image/webp"}],
+    images: [{"url": "/images/2025/04/empresas_sin_animo_de_lucro.webp", "width": 512, "height": 512, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     type: "article",
     publishedTime: "2025-11-28T11:55:14+00:00",
     modifiedTime: "2026-06-01T11:30:25+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/11/calendario_fiscal_anual.webp", "width": 1024, "height": 1024, "type": "image/webp"}],
+    images: [{"url": "/images/2025/11/calendario_fiscal_anual.webp", "width": 1024, "height": 1024, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

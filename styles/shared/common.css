@@ -181,3 +181,16 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 .rll-youtube-player {
   cursor: pointer;
 }
+
+/* --- Formularios (ver components/ElementorRuntime.tsx) ---
+   El original define `.elementor-message` y `.elementor-message-danger` (rojo)
+   en su propio CSS; aqui solo se añade el color de éxito, que en el original
+   lo pone el propio JS de Elementor en linea. */
+.elementor-message-success {
+  color: #008a20;
+}
+.elementor-field[disabled],
+button.elementor-button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: "es_ES",
     type: "article",
     modifiedTime: "2025-11-21T14:49:06+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/04/como_funciona.webp", "width": 1000, "height": 1000, "type": "image/webp"}],
+    images: [{"url": "/images/2025/04/como_funciona.webp", "width": 1000, "height": 1000, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

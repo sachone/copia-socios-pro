@@ -1,0 +1,150 @@
+/* Banner de consentimiento de cookies (RGPD). No es un modal a pantalla
+   completa a propósito: la página sigue siendo visible y usable detrás,
+   como pide la normativa (no se puede forzar la decisión). */
+
+.overlay {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  pointer-events: none;
+}
+
+.panel {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 900px;
+  background: #ffffff;
+  color: #1d2120;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  padding: 20px 24px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.text {
+  margin: 0 0 14px;
+}
+
+.text a {
+  color: #e23115;
+  text-decoration: underline;
+}
+
+.categories {
+  border: 0;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.category {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.category input {
+  margin-top: 3px;
+  flex-shrink: 0;
+  accent-color: #e23115;
+}
+
+.category input:disabled {
+  cursor: not-allowed;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.primaryButton,
+.secondaryButton,
+.linkButton {
+  font: inherit;
+  font-weight: 600;
+  border-radius: 40px;
+  padding: 10px 20px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.primaryButton {
+  background: #e23115;
+  color: #fff;
+  border-color: #e23115;
+}
+
+.primaryButton:hover {
+  background: #c72a10;
+  border-color: #c72a10;
+}
+
+.secondaryButton {
+  background: transparent;
+  color: #1d2120;
+  border-color: #333333;
+}
+
+.secondaryButton:hover {
+  background: #f5f5f5;
+}
+
+.linkButton {
+  background: transparent;
+  color: #1d2120;
+  border-color: transparent;
+  text-decoration: underline;
+  padding: 10px 6px;
+  margin-inline-end: auto;
+}
+
+.reopenButton {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #e5e5e5;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reopenButton:hover {
+  transform: scale(1.06);
+}
+
+@media (max-width: 640px) {
+  .actions {
+    justify-content: stretch;
+  }
+  .primaryButton,
+  .secondaryButton {
+    flex: 1;
+    text-align: center;
+  }
+  .linkButton {
+    flex-basis: 100%;
+    text-align: center;
+    margin-inline-end: 0;
+  }
+}

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     type: "article",
     publishedTime: "2026-03-02T15:05:15+00:00",
     modifiedTime: "2026-06-01T11:08:37+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2026/03/guia_portal_socios.webp", "width": 1536, "height": 1024, "type": "image/webp"}],
+    images: [{"url": "/images/2026/03/guia_portal_socios.webp", "width": 1536, "height": 1024, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

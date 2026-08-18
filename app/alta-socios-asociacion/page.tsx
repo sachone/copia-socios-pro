@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: "es_ES",
     type: "article",
     publishedTime: "2026-05-12T09:34:49+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2026/03/proceso-alta-socios-asociacion-mesa-oficina-portatil.webp", "width": 1376, "height": 768, "type": "image/webp"}],
+    images: [{"url": "/images/2026/03/proceso-alta-socios-asociacion-mesa-oficina-portatil.webp", "width": 1376, "height": 768, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

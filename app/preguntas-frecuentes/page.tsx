@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: "es_ES",
     type: "article",
     modifiedTime: "2025-06-18T08:49:29+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/06/preguntas_frecuentes_soft_socios-pro.webp", "width": 1200, "height": 737, "type": "image/webp"}],
+    images: [{"url": "/images/2025/06/preguntas_frecuentes_soft_socios-pro.webp", "width": 1200, "height": 737, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: "es_ES",
     type: "article",
     modifiedTime: "2025-11-07T12:59:51+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/10/modelos_AEAT_asociaciones.jpg", "width": 1200, "height": 798, "type": "image/jpeg"}],
+    images: [{"url": "/images/2025/10/modelos_AEAT_asociaciones.jpg", "width": 1200, "height": 798, "type": "image/jpeg"}],
   },
   twitter: {
     card: "summary_large_image",

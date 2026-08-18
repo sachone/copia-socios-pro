@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     type: "article",
     publishedTime: "2026-04-08T08:21:11+00:00",
     modifiedTime: "2026-06-01T11:31:38+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2026/03/bienvenida-nuevos-socios-entrada-asociacion.webp", "width": 1408, "height": 768, "type": "image/webp"}],
+    images: [{"url": "/images/2026/03/bienvenida-nuevos-socios-entrada-asociacion.webp", "width": 1408, "height": 768, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

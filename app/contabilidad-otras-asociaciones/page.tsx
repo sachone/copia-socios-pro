@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: "es_ES",
     type: "article",
     modifiedTime: "2025-11-21T13:54:13+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/04/otras_asociaciones.webp", "width": 731, "height": 450, "type": "image/webp"}],
+    images: [{"url": "/images/2025/04/otras_asociaciones.webp", "width": 731, "height": 450, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

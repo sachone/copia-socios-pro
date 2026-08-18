@@ -23,13 +23,19 @@ npm run build && npm start
 | `styles/pages/` | Solo lo que cambia en cada página frente a lo anterior: su CSS propio de Elementor |
 | `styles/site-overrides.css` | Lo único de `styles/` escrito a mano: reglas que suplen al JS de Elementor |
 | `public/fonts/` | Poppins, Roboto y Roboto Slab, ya recortadas a los pesos que se usan de verdad |
+| `public/images/` | Todas las imágenes del sitio, descargadas del original en vez de enlazadas |
 | `public/widgets/` | El JS que Elementor lleva incrustado en algún widget HTML |
+| `app/api/contact/route.ts` | Backend real del formulario de contacto (Resend) |
+| `components/CookieConsent.tsx` | Banner de consentimiento de cookies (RGPD) |
+| `lib/consent.ts` | Estado de consentimiento: `useConsent()` / `hasConsent()` para gatear scripts futuros |
+| `lib/site-url.ts` | Resuelve el dominio real del despliegue (para metadatos y JSON-LD) |
 | `tools/` | Los scripts que descargan el original y regeneran todo lo anterior |
 
-Todo lo que hay en `app/*/page.tsx`, `content/`, `styles/shared/`, `styles/pages/`,
-`public/fonts/`, `public/widgets/`, `lib/routes.json` y `lib/preload-fonts.json`
-**está generado**: no lo edites a mano, se sobrescribe. Lo escrito a mano es
-`app/layout.tsx`, `components/`, `styles/site-overrides.css` y `tools/`.
+Todo lo que hay en `app/*/page.tsx` (excepto `app/api/`), `content/`, `styles/shared/`,
+`styles/pages/`, `public/fonts/`, `public/images/`, `public/widgets/`, `lib/routes.json`,
+`lib/preload-fonts.json` y `lib/favicons.json` **está generado**: no lo edites a mano, se
+sobrescribe. Lo escrito a mano es `app/layout.tsx`, `app/api/`, `components/`,
+`lib/consent.ts`, `lib/site-url.ts`, `styles/site-overrides.css` y `tools/`.
 
 ## Regenerar desde el original
 
@@ -44,13 +50,14 @@ cambie el original; `generar.py` trabaja siempre sobre la caché.
 
 ## Decisiones que conviene conocer
 
-**Las imágenes apuntan a socios.pro.** Tal y como se pidió: ningún `.webp` se ha
-copiado al proyecto. Si algún día quieres que el clon sea autónomo, hay que
-descargar `/wp-content/uploads/` y reescribir los `src`.
-
-**Las tipografías sí son locales.** El original las sirve sin cabeceras CORS, así
-que desde cualquier otro dominio fallan. Se descargan a `public/fonts/` y
-`tools/generar.py` reescribe las rutas del CSS.
+**Las imágenes y las tipografías son locales.** Se descargan a `public/images/`
+y `public/fonts/` (`localize_images()` y `localize_fonts()` en
+`tools/generar.py`), así que el sitio no depende de que `socios.pro` siga
+accesible. Se preserva la ruta que tenían bajo `/wp-content/uploads/` para no
+chocar entre ficheros del mismo nombre subidos en fechas distintas. El
+`og:image` y el `logo` del JSON-LD se completan con el dominio real del
+despliegue en tiempo de ejecución (`lib/site-url.ts`), no con uno fijado al
+generar el sitio.
 
 **El HTML se inyecta tal cual.** Cada página conserva el marcado que genera
 Elementor, con sus clases, para que el CSS original encaje sin retoques. La
@@ -108,17 +115,69 @@ En `next.config.ts` también se marcan `/fonts/*` como cacheables para siempre
 página, no un hash, así que sí puede cambiar de contenido en una
 regeneración).
 
+## Formulario de contacto
+
+Los formularios (`/contacto/` y `/socios-pro-wallet/`) envían de verdad, vía
+`app/api/contact/route.ts` con [Resend](https://resend.com). En el original
+hacían POST a `admin-ajax.php` de WordPress; aquí no hay WordPress, así que
+este endpoint ocupa su lugar.
+
+**Para activarlo**, copia `.env.example` a `.env.local` (desarrollo) y añade
+las mismas variables en Vercel → Project → Settings → Environment Variables
+(producción):
+
+```
+RESEND_API_KEY=      # resend.com → API Keys (gratis hasta 3000 emails/mes)
+CONTACT_EMAIL_TO=    # a qué email llegan los mensajes
+CONTACT_EMAIL_FROM=  # remitente (con el dominio de prueba de Resend basta para probar)
+```
+
+Sin esas variables, el formulario se ve y se comporta igual (validación,
+mensajes de éxito/error), pero el envío responde con un error explícito en
+vez de fallar en silencio o intentar mandar un email que no puede.
+
+**No lleva CAPTCHA** (el original usa reCAPTCHA v3 con una clave atada al
+dominio de socios.pro, que no sirve para este). Si lo quieres, la forma más
+sencilla es [reCAPTCHA v2/v3 de Google](https://www.google.com/recaptcha/admin)
+o [Cloudflare Turnstile]: se verifica el token en `app/api/contact/route.ts`
+antes de llamar a Resend. Mientras tanto, hay un honeypot (un campo oculto que
+los bots que rellenan formularios a ciegas suelen completar) que frena el spam
+más básico sin fricción para quien lo rellena de verdad.
+
+## Banner de cookies
+
+`components/CookieConsent.tsx` es un banner de consentimiento propio (RGPD),
+no una réplica del que traía el original (Complianz, un plugin de WordPress
+con su propio backend). Tres categorías: necesarias (siempre activas),
+analítica y marketing, ambas desactivadas por defecto —como exige la
+normativa, no vale "todo activado salvo que la persona diga que no"—.
+
+- Guarda la decisión en una cookie propia (`cookie_consent`, 180 días, igual
+  que el original) mediante `lib/consent.ts`.
+- Se puede cambiar en cualquier momento desde el icono 🍪 fijo en la esquina
+  inferior izquierda.
+- Para gatear un script futuro (Google Analytics, Meta Pixel, GTM...) según
+  la categoría elegida:
+
+  ```tsx
+  "use client";
+  import { useConsent } from "@/lib/consent";
+  import Script from "next/script";
+
+  export default function Analytics() {
+    const { analytics } = useConsent();
+    if (!analytics) return null;
+    return <Script src="https://www.googletagmanager.com/gtag/js?id=G-XXXX" />;
+  }
+  ```
+
+  Móntalo en `app/layout.tsx` junto a `<CookieConsent />`.
+
 ## Lo que no se ha replicado
 
 - **Google Tag Manager** (`GTM-KHHWG3R6`) y **reCAPTCHA**: son scripts de
-  seguimiento; se han dejado fuera a propósito. Si los quieres, añade
-  `next/script` en `app/layout.tsx` con tu propio identificador.
-- **El banner de cookies (Complianz)**: es un plugin de WordPress con su propio
-  backend de consentimiento. Habría que sustituirlo por una solución propia.
-- **Los formularios**: en el original hacen POST a `admin-ajax.php`. Aquí se
-  interceptan y avisan de que no hay backend
-  (`components/ElementorRuntime.tsx`). Conéctalos a una Route Handler de Next o
-  a un servicio externo.
+  seguimiento del original; se han dejado fuera a propósito (ver arriba cómo
+  añadir los tuyos, ya con el banner de cookies delante).
 - **Los feeds RSS** (`/feed/`, `/comments/feed/`).
 - **Motion FX** (el ligero efecto de inclinación al mover el ratón sobre la
   imagen de portada).
@@ -128,17 +187,20 @@ en el original (ver `next.config.ts`).
 
 ## Desplegar
 
-El proyecto no necesita configuración especial en Vercel: detecta Next.js
-automáticamente. Solo dos cosas a tener en cuenta:
+Vercel detecta Next.js automáticamente, no hace falta configuración especial.
+Lo único que puede hacer falta:
 
-- Las imágenes siguen apuntando a `socios.pro` (ver "Decisiones que conviene
-  conocer" más abajo), así que ese dominio tiene que seguir accesible; no hace
-  falta ninguna variable de entorno.
+- Las 3 variables de entorno del formulario (`RESEND_API_KEY`,
+  `CONTACT_EMAIL_TO`, `CONTACT_EMAIL_FROM`) — ver "Formulario de contacto"
+  arriba. Sin ellas el sitio funciona igual, solo que ese formulario en
+  concreto no envía nada.
+- `NEXT_PUBLIC_SITE_URL` solo si usas un dominio propio y quieres fijarlo a
+  mano; si no, se calcula solo a partir del dominio de Vercel.
 - Si repites el proceso de regenerar (`tools/generar.py`) y vuelves a
-  desplegar, revisa que `public/fonts/` y `styles/shared/` no se hayan quedado
-  con ficheros de una ejecución anterior mezclados con los nuevos — el script
-  ya limpia esas carpetas antes de escribir, pero si tocas algo a mano
-  conviene borrarlas primero.
+  desplegar, revisa que `public/fonts/`, `public/images/` y `styles/shared/`
+  no se hayan quedado con ficheros de una ejecución anterior mezclados con los
+  nuevos — el script ya limpia esas carpetas antes de escribir, pero si tocas
+  algo a mano conviene borrarlas primero.
 
 ## Aviso
 

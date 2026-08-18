@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     type: "article",
     publishedTime: "2026-03-05T13:12:16+00:00",
     modifiedTime: "2026-06-01T11:31:07+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2026/03/salon-elegante-de-asociacion-exclusiva-con-decoracion-clasica-y-grandes-ventanales.webp", "width": 1376, "height": 768, "type": "image/webp"}],
+    images: [{"url": "/images/2026/03/salon-elegante-de-asociacion-exclusiva-con-decoracion-clasica-y-grandes-ventanales.webp", "width": 1376, "height": 768, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     type: "article",
     publishedTime: "2026-01-27T12:58:53+00:00",
     modifiedTime: "2026-06-01T11:18:50+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2026/01/asociaciones_excel_papel.webp", "width": 1200, "height": 809, "type": "image/webp"}],
+    images: [{"url": "/images/2026/01/asociaciones_excel_papel.webp", "width": 1200, "height": 809, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

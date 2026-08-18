@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     type: "article",
     publishedTime: "2025-10-31T12:21:21+00:00",
     modifiedTime: "2026-06-01T11:20:24+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/10/cuotas_por_SEPA.jpg", "width": 1200, "height": 800, "type": "image/jpeg"}],
+    images: [{"url": "/images/2025/10/cuotas_por_SEPA.jpg", "width": 1200, "height": 800, "type": "image/jpeg"}],
   },
   twitter: {
     card: "summary_large_image",

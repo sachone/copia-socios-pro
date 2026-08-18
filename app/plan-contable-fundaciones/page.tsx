@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: "es_ES",
     type: "article",
     modifiedTime: "2026-06-26T11:45:01+00:00",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/04/plan_contabilida.webp", "width": 1011, "height": 602, "type": "image/webp"}],
+    images: [{"url": "/images/2025/04/plan_contabilida.webp", "width": 1011, "height": 602, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",

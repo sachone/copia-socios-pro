@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     siteName: "Socios Pro",
     locale: "es_ES",
     type: "website",
-    images: [{"url": "https://socios.pro/wp-content/uploads/2025/04/sin_animo_de_lucro.webp", "width": 900, "height": 600, "type": "image/webp"}],
+    images: [{"url": "/images/2025/04/sin_animo_de_lucro.webp", "width": 900, "height": 600, "type": "image/webp"}],
   },
   twitter: {
     card: "summary_large_image",
