@@ -137,7 +137,9 @@ export default function ElementorRuntime({ bodyClass }: { bodyClass: string }) {
 
       submitBtn?.setAttribute("disabled", "true");
       try {
-        const res = await fetch("/api/contact", { method: "POST", body: data });
+        // Con barra final: next.config.ts fuerza `trailingSlash`, y sin ella
+        // el POST sufre una redirección 308 de más en cada envío.
+        const res = await fetch("/api/contact/", { method: "POST", body: data });
         const json = await res.json().catch(() => ({ ok: false, error: "Respuesta inválida del servidor." }));
         if (json.ok) {
           messageBox(form, "success").textContent = "¡Gracias! Hemos recibido tu mensaje.";
