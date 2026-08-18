@@ -1,0 +1,51 @@
+/* ---------------------------------------------------------------------------
+   Comportamientos que en el sitio original aporta JavaScript (SmartMenus de
+   Elementor Pro). Aqui se resuelven con CSS + un poco de JS propio para no
+   arrastrar jQuery ni el bundle completo de Elementor.
+   --------------------------------------------------------------------------- */
+
+/* --- Submenus del menu principal (escritorio) --- */
+.elementor-nav-menu--main .elementor-nav-menu > li {
+  position: relative;
+}
+.elementor-nav-menu--main .elementor-nav-menu ul.sub-menu {
+  display: none;
+  z-index: 9999;
+}
+.elementor-nav-menu--main .elementor-nav-menu > li:hover > ul.sub-menu,
+.elementor-nav-menu--main .elementor-nav-menu > li:focus-within > ul.sub-menu {
+  display: block;
+}
+
+/* --- Menu desplegable (movil / tablet) --- */
+.elementor-nav-menu--dropdown ul.sub-menu {
+  display: none;
+  position: static;
+  width: 100%;
+}
+.elementor-nav-menu--dropdown li.menu-item-open > ul.sub-menu {
+  display: block;
+}
+/* La flecha real es `.sub-arrow` (icono de Elementor). El span vacio que
+   anade el tema Astra no pinta nada, igual que en el original. */
+.dropdown-menu-toggle {
+  display: none;
+}
+.elementor-nav-menu--dropdown .sub-arrow {
+  cursor: pointer;
+  padding: 0 6px;
+}
+.elementor-nav-menu--dropdown li.menu-item-open > a .sub-arrow .e-font-icon-svg {
+  transform: rotate(calc(90deg * var(--direction-multiplier, 1)));
+}
+
+/* --- Animaciones de entrada de Elementor ---
+   Los elementos con `elementor-invisible` se revelan al entrar en pantalla. */
+.elementor-invisible {
+  visibility: hidden;
+}
+
+/* Reproductor de YouTube diferido (wp-rocket) ya resuelto en el HTML */
+.rll-youtube-player {
+  cursor: pointer;
+}

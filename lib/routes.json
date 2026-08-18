@@ -1,0 +1,402 @@
+[
+  {
+    "key": "index",
+    "route": "/",
+    "title": "Software gestión asociaciones. Programa de contabilidad",
+    "lastmod": "2026-06-26T09:08:07+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "alta-socios-asociacion",
+    "route": "/alta-socios-asociacion/",
+    "title": "Alta de socios en una asociación: proceso sencillo y efectivo",
+    "lastmod": null,
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "alta",
+    "route": "/alta/",
+    "title": "Registro en nuestro herramienta",
+    "lastmod": "2025-10-21T08:49:48+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "aviso-legal",
+    "route": "/aviso-legal/",
+    "title": "Aviso legal",
+    "lastmod": "2025-10-21T07:34:45+00:00",
+    "indexable": false,
+    "type": "page"
+  },
+  {
+    "key": "blog",
+    "route": "/blog/",
+    "title": "Blog",
+    "lastmod": "2025-11-21T13:47:15+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "calendario-fiscal-anual-para-asociaciones-sin-animo-de-lucro",
+    "route": "/calendario-fiscal-anual-para-asociaciones-sin-animo-de-lucro/",
+    "title": "Calendario fiscal anual para asociaciones sin ánimo de lucro",
+    "lastmod": "2026-06-01T11:30:25+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "captar-socios-asociacion",
+    "route": "/captar-socios-asociacion/",
+    "title": "Cómo captar socios para una asociación: estrategias efectivas",
+    "lastmod": "2026-06-01T11:31:38+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "cierre-contable-anual-de-una-asociacion-paso-a-paso",
+    "route": "/cierre-contable-anual-de-una-asociacion-paso-a-paso/",
+    "title": "Cierre contable anual de una asociación paso a paso",
+    "lastmod": "2026-06-01T11:28:24+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "como-automatizar-cuotas-socios-y-donaciones",
+    "route": "/como-automatizar-cuotas-socios-y-donaciones/",
+    "title": "Cómo automatizar las cuotas de socios y donaciones sin morir en el intento",
+    "lastmod": "2026-06-01T11:29:44+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "como-elegir-el-mejor-software-de-gestion-de-socios",
+    "route": "/como-elegir-el-mejor-software-de-gestion-de-socios/",
+    "title": "Cómo elegir el mejor software de gestión de socios",
+    "lastmod": "2026-06-01T11:19:47+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "como-funciona",
+    "route": "/como-funciona/",
+    "title": "¿Cómo funciona nuestro programa de contabilidad?",
+    "lastmod": "2025-11-21T14:49:06+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "como-gestionar-el-portal-del-socio-guia-socios-hagan-gestiones-solos",
+    "route": "/como-gestionar-el-portal-del-socio-guia-socios-hagan-gestiones-solos/",
+    "title": "Cómo gestionar el portal del socio: guía para tus socios",
+    "lastmod": "2026-06-01T11:08:37+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "como-preparar-la-contabilidad-de-tu-ong-para-pedir-subvenciones",
+    "route": "/como-preparar-la-contabilidad-de-tu-ong-para-pedir-subvenciones/",
+    "title": "Cómo preparar la contabilidad de tu ONG para pedir subvenciones",
+    "lastmod": "2026-06-01T11:27:54+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "contabilidad-ampa",
+    "route": "/contabilidad-ampa/",
+    "title": "Software gestión AMPA. Programa contabilidad AMPA",
+    "lastmod": "2025-11-11T11:15:46+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "contabilidad-asociaciones-falleras",
+    "route": "/contabilidad-asociaciones-falleras/",
+    "title": "Software asociación fallera. Programa de contabilidad",
+    "lastmod": "2025-11-21T13:51:32+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "contabilidad-asociaciones-festeras",
+    "route": "/contabilidad-asociaciones-festeras/",
+    "title": "Software asociación festera. Programa de contabilidad",
+    "lastmod": "2025-11-11T11:16:59+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "contabilidad-asociaciones-religiosas",
+    "route": "/contabilidad-asociaciones-religiosas/",
+    "title": "Software asociación religiosa. Programa contabilidad",
+    "lastmod": "2025-11-11T11:17:27+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "contabilidad-bandas-musica",
+    "route": "/contabilidad-bandas-musica/",
+    "title": "Software gestión banda de música. Programa de contabilidad",
+    "lastmod": "2025-11-11T11:17:47+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "contabilidad-clubs-deportivos",
+    "route": "/contabilidad-clubs-deportivos/",
+    "title": "Software club deportivo. Programa contabilidad club deportivo",
+    "lastmod": "2025-11-21T14:47:00+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "contabilidad-empresas-sin-animo-de-lucro",
+    "route": "/contabilidad-empresas-sin-animo-de-lucro/",
+    "title": "Software entidades sin ánimo de lucro. Contabilidad empresas",
+    "lastmod": "2025-11-21T14:47:47+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "contabilidad-fundaciones",
+    "route": "/contabilidad-fundaciones/",
+    "title": "Software fundaciones. Contabilidad fundación sin ánimo de lucro",
+    "lastmod": "2025-12-04T11:45:10+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "contabilidad-ong",
+    "route": "/contabilidad-ong/",
+    "title": "Programa gestión ONG. Programa contabilidad ONG",
+    "lastmod": "2025-11-11T11:19:32+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "contabilidad-otras-asociaciones",
+    "route": "/contabilidad-otras-asociaciones/",
+    "title": "Software para asociaciones culturales, festivas y más",
+    "lastmod": "2025-11-21T13:54:13+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "contabilidad-partidos-politicos",
+    "route": "/contabilidad-partidos-politicos/",
+    "title": "Software partido político. Programa contabilidad partido político",
+    "lastmod": "2025-11-21T13:55:23+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "contacto",
+    "route": "/contacto/",
+    "title": "Contáctanos ya para resolver tus dudas o pedir presupuesto",
+    "lastmod": "2026-07-14T07:39:20+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "cuotas-por-sepa-sin-morosidad",
+    "route": "/cuotas-por-sepa-sin-morosidad/",
+    "title": "Cuotas por SEPA sin morosidad",
+    "lastmod": "2026-06-01T11:20:24+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "diferencias-contabilidad-empresa-entidad-sin-animo-de-lucro",
+    "route": "/diferencias-contabilidad-empresa-entidad-sin-animo-de-lucro/",
+    "title": "Diferencias entre la contabilidad de una empresa y de una entidad sin ánimo de lucro",
+    "lastmod": "2026-06-01T11:29:03+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "digitalizar-gestion-socios-cuotas-asociaciones",
+    "route": "/digitalizar-gestion-socios-cuotas-asociaciones/",
+    "title": "Digitalizar la gestión de socios y cuotas en 2026",
+    "lastmod": "2026-06-01T11:18:50+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "errores-contables-mas-frecuentes-en-asociaciones-y-como-evitarlos",
+    "route": "/errores-contables-mas-frecuentes-en-asociaciones-y-como-evitarlos/",
+    "title": "Errores contables más frecuentes en asociaciones (y cómo evitarlos)",
+    "lastmod": "2026-06-01T11:27:08+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "facturacion-asociaciones",
+    "route": "/facturacion-asociaciones/",
+    "title": "Facturación asociaciones sin ánimo de lucro y fundaciones",
+    "lastmod": "2025-11-21T14:49:40+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "gestion-economica-asociaciones-pequenas",
+    "route": "/gestion-economica-asociaciones-pequenas/",
+    "title": "Gestión económica para asociaciones | Profesionalízala fácil",
+    "lastmod": null,
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "guia-comunicacion-interna-asociaciones",
+    "route": "/guia-comunicacion-interna-asociaciones/",
+    "title": "Comunicación interna para asociaciones: guía práctica",
+    "lastmod": null,
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "libros-contables-asociacion",
+    "route": "/libros-contables-asociacion/",
+    "title": "Libros contables asociaciones sin fines de lucro",
+    "lastmod": "2025-04-08T09:57:10+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "mejor-software-gestion-asociaciones",
+    "route": "/mejor-software-gestion-asociaciones/",
+    "title": "Cómo elegir el mejor software de gestión para asociaciones",
+    "lastmod": null,
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "modelos-aeat-para-asociaciones-guia-practica",
+    "route": "/modelos-aeat-para-asociaciones-guia-practica/",
+    "title": "Modelos AEAT para asociaciones: guía práctica",
+    "lastmod": "2026-06-01T11:24:46+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "obligaciones-contables-minimas-de-una-asociacion-pequena",
+    "route": "/obligaciones-contables-minimas-de-una-asociacion-pequena/",
+    "title": "Obligaciones contables mínimas de una asociación pequeña",
+    "lastmod": "2026-06-01T11:25:46+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "plan-contable-fundaciones",
+    "route": "/plan-contable-fundaciones/",
+    "title": "Plan contabilidad asociaciones sin ánimo de lucro",
+    "lastmod": "2026-06-26T11:45:01+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "planes-y-precios",
+    "route": "/planes-y-precios/",
+    "title": "Planes y precios",
+    "lastmod": "2026-06-26T09:10:59+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "politica-de-cookies",
+    "route": "/politica-de-cookies/",
+    "title": "Política de cookies",
+    "lastmod": "2025-10-21T07:35:21+00:00",
+    "indexable": false,
+    "type": "page"
+  },
+  {
+    "key": "politica-de-privacidad",
+    "route": "/politica-de-privacidad/",
+    "title": "Política de privacidad",
+    "lastmod": "2025-10-21T07:35:07+00:00",
+    "indexable": false,
+    "type": "page"
+  },
+  {
+    "key": "preguntas-frecuentes",
+    "route": "/preguntas-frecuentes/",
+    "title": "Preguntas frecuentes sobre el programa de contabilidad",
+    "lastmod": "2025-06-18T08:49:29+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "preparar-asociacion-auditoria-economica",
+    "route": "/preparar-asociacion-auditoria-economica/",
+    "title": "Cómo preparar una asociación para una auditoría económica",
+    "lastmod": null,
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "programa-gestion-asociaciones",
+    "route": "/programa-gestion-asociaciones/",
+    "title": "Software gestión asociaciones",
+    "lastmod": "2025-11-07T12:59:51+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "que-es-verifactu-y-por-que-tu-asociacion-debe-conocerlo-en-2026",
+    "route": "/que-es-verifactu-y-por-que-tu-asociacion-debe-conocerlo-en-2026/",
+    "title": "Qué es VeriFactu y por qué tu asociación debe conocerlo en 2026",
+    "lastmod": "2026-06-01T11:32:50+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "que-es",
+    "route": "/que-es/",
+    "title": "¿Qué es Socios.Pro?",
+    "lastmod": "2026-06-26T09:12:55+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "quienes-somos",
+    "route": "/quienes-somos/",
+    "title": "¿Quiénes somos?",
+    "lastmod": "2025-10-21T08:46:41+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "rgpd-asociaciones",
+    "route": "/rgpd-asociaciones/",
+    "title": "RGPD en asociaciones: guía práctica para datos de socios",
+    "lastmod": "2026-06-01T11:31:07+00:00",
+    "indexable": true,
+    "type": "post"
+  },
+  {
+    "key": "socios-pro-fiscal",
+    "route": "/socios-pro-fiscal/",
+    "title": "PLAN FISCAL - Socios Pro",
+    "lastmod": "2026-07-08T12:12:46+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "socios-pro-gestion",
+    "route": "/socios-pro-gestion/",
+    "title": "Socios pro Gestión - Socios Pro",
+    "lastmod": "2026-03-11T12:08:41+00:00",
+    "indexable": true,
+    "type": "page"
+  },
+  {
+    "key": "socios-pro-wallet",
+    "route": "/socios-pro-wallet/",
+    "title": "Socios pro Wallet - Socios Pro",
+    "lastmod": "2026-03-11T12:08:29+00:00",
+    "indexable": true,
+    "type": "page"
+  }
+]
