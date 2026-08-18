@@ -25,7 +25,7 @@ npm run build && npm start
 | `public/fonts/` | Poppins, Roboto y Roboto Slab, ya recortadas a los pesos que se usan de verdad |
 | `public/images/` | Todas las imágenes del sitio, descargadas del original en vez de enlazadas |
 | `public/widgets/` | El JS que Elementor lleva incrustado en algún widget HTML |
-| `public/widgets/vendor/` | Copia local del JS de terceros que cargaba algún widget (Tailwind) |
+| `public/widgets/vendor/` | Copia local de algún JS de terceros, si un widget llegara a traer uno (hoy no hay ninguno) |
 | `app/api/contact/route.ts` | Backend real del formulario de contacto (Resend) |
 | `components/CookieConsent.tsx` | Banner de consentimiento de cookies (RGPD) |
 | `lib/consent.ts` | Estado de consentimiento: `useConsent()` / `hasConsent()` para gatear scripts futuros |
@@ -112,6 +112,19 @@ rotas, fuente y peso computados) para no perder fidelidad visual:
    600) y la del texto (Roboto 400), calculadas en cada regeneración
    (`lib/preload-fonts.json`) para que el `<link rel="preload">` nunca quede
    apuntando a un fichero que ya no existe.
+
+5. **Tailwind, compilado aquí y no en el navegador.** La tabla comparativa
+   de `/planes-y-precios/` la construye un widget con clases de Tailwind, y el
+   original resolvía eso cargando el "Play CDN": ~400 KB de JavaScript que, ya
+   en el navegador, rastrean el DOM y fabrican el CSS al vuelo. Hasta que
+   terminaba, los 622 iconos SVG de la tabla se pintaban a tamaño natural
+   —enormes— y la maqueta bailaba. `precompile_tailwind()` hace ese trabajo
+   una sola vez al generar el sitio: **10 KB de CSS en vez de 400 KB de JS**,
+   y como llega en la hoja de la página (que bloquea el primer pintado), no
+   hay nada que esperar ni destello que ver.
+
+   Esto es lo único de `tools/generar.py` que necesita las dependencias de
+   desarrollo instaladas (`npm install`), porque llama a la CLI de Tailwind.
 
 En `next.config.ts` también se marcan `/fonts/*` como cacheables para siempre
 (los nombres de Google Fonts ya incluyen un hash de su contenido) y
@@ -212,16 +225,20 @@ formularios fuera y que nos metan en un iframe. Las acompañan
 `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`,
 `Permissions-Policy` y, solo en producción, `Strict-Transport-Security`.
 
-**Nada se carga de terceros.** Además de las imágenes y las tipografías, se
-traen al sitio las dos cosas que el original cargaba de fuera en
-`/planes-y-precios/`: el JS de Tailwind (`cdn.tailwindcss.com`) y la
-tipografía Inter (Google Fonts). Un `<script>` de otro dominio se ejecuta con
-todos los permisos sobre la página, así que si ese CDN cayera o le tocaran el
-fichero se lo comerían todas las visitas; y la tipografía remota le entregaba
-a Google la IP de cada visita sin haber consentido nada, que es justo lo que
-el banner de cookies existe para evitar. Lo hace `tools/generar.py`
-(`localize_google_font_css()` y el bloque de `vendor/`), así que sobrevive a
-las regeneraciones.
+**Nada se carga de terceros.** El original cargaba dos cosas de fuera en
+`/planes-y-precios/`, y ninguna sigue ahí:
+
+- **Tailwind** venía de `cdn.tailwindcss.com`. Un `<script>` de otro dominio
+  se ejecuta con todos los permisos sobre la página, así que si ese CDN cayera
+  o le tocaran el fichero se lo comerían todas las visitas. Ahora el CSS se
+  compila al generar el sitio (`precompile_tailwind()`) y el script desaparece.
+- **La tipografía Inter** venía de Google Fonts, que recibía la IP de cada
+  visita sin haber consentido nada — justo lo que el banner de cookies existe
+  para evitar. Ahora se descarga a `public/fonts/` como las demás
+  (`localize_google_font_css()`).
+
+Ambas cosas las hace `tools/generar.py`, así que sobreviven a las
+regeneraciones.
 
 **Scripts en línea.** Tanto las clases de `<body>` como el JSON-LD escapan el
 `<` a `\u003c` antes de incrustarse: `JSON.stringify()` no neutraliza un

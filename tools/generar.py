@@ -37,6 +37,8 @@ import json
 import os
 import re
 import shutil
+import subprocess
+import tempfile
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -463,6 +465,49 @@ def external_font_imports(head):
 
 # ------------------------------------------------- scripts de widgets HTML
 
+TAILWIND_CDN = "cdn.tailwindcss.com"
+
+
+def precompile_tailwind(html, widget_js):
+    """Genera el CSS de Tailwind de una pagina, en vez de compilarlo en el
+    navegador.
+
+    El original carga cdn.tailwindcss.com (el "Play CDN") dentro del <body>:
+    son ~400 KB de JavaScript que, ya en el navegador, rastrean el DOM y
+    fabrican el CSS al vuelo. Hasta que termina, los 622 iconos SVG de la
+    tabla comparativa se pintan a tamaño natural -enormes- y la maqueta baila.
+    Tailwind trae una CLI que hace ese mismo trabajo aqui, una sola vez: el
+    CSS entra con el resto de la hoja de la pagina y no hay nada que esperar.
+
+    Se le dan como fuentes el HTML de la pagina y el JS del widget, porque la
+    tabla se construye desde JavaScript y las clases solo aparecen ahi.
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        fuente_html = os.path.join(tmp, "pagina.html")
+        open(fuente_html, "w", encoding="utf-8").write(html)
+        fuentes = [fuente_html]
+
+        if widget_js:
+            fuente_js = os.path.join(tmp, "widget.js")
+            open(fuente_js, "w", encoding="utf-8").write(widget_js)
+            fuentes.append(fuente_js)
+
+        config = os.path.join(tmp, "tailwind.config.js")
+        open(config, "w", encoding="utf-8").write(
+            "module.exports = { content: %s };\n" % json.dumps(fuentes))
+
+        entrada = os.path.join(tmp, "entrada.css")
+        open(entrada, "w", encoding="utf-8").write(
+            "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n")
+
+        salida = os.path.join(tmp, "salida.css")
+        subprocess.run(
+            ["npx", "tailwindcss", "-c", config, "-i", entrada, "-o", salida, "--minify"],
+            cwd=ROOT, check=True, capture_output=True,
+        )
+        return open(salida, encoding="utf-8").read()
+
+
 def vendor_script_name(url):
     """Nombre local para un script de terceros. `https://cdn.tailwindcss.com`
     no tiene ruta, asi que en ese caso el nombre sale del dominio."""
@@ -761,10 +806,29 @@ def main():
     vendor_dir = os.path.join(out_widgets, "vendor")
     os.makedirs(vendor_dir, exist_ok=True)
     vendored = {}
-    for page in pages.values():
+    descartados = {}
+    for key, page in pages.items():
         for url in page["ext_scripts"]:
-            if not url.startswith(("http://", "https://")) or url in vendored:
+            if not url.startswith(("http://", "https://")):
                 continue
+            if url in vendored or url in descartados:
+                continue
+
+            # Tailwind no se trae: se compila aqui y su CSS se pega al de la
+            # pagina, de modo que el script sobra por completo (ver
+            # precompile_tailwind).
+            if TAILWIND_CDN in url:
+                widget_js = "\n\n".join(page["inline_scripts"])
+                css = precompile_tailwind(page["html"], widget_js)
+                hoja = os.path.join(out_css, key + ".css")
+                with open(hoja, "a", encoding="utf-8") as f:
+                    f.write("\n\n/* === Tailwind, compilado por tools/generar.py ===\n"
+                            "   El original lo generaba en el navegador con %s;\n"
+                            "   aqui viene ya hecho, asi no hay destello mientras compila. */\n%s"
+                            % (url, css))
+                descartados[url] = True
+                continue
+
             nombre = vendor_script_name(url)
             req = urllib.request.Request(url, headers={"User-Agent": UA_MODERNO})
             with urllib.request.urlopen(req, timeout=60) as r:
@@ -774,6 +838,9 @@ def main():
                       % url).encode("utf-8")
             open(os.path.join(vendor_dir, nombre), "wb").write(banner + datos)
             vendored[url] = "/widgets/vendor/" + nombre
+
+    if not os.listdir(vendor_dir):
+        os.rmdir(vendor_dir)
     for key, page in pages.items():
         if not page["inline_scripts"]:
             continue
@@ -799,7 +866,7 @@ def main():
     for key, page in pages.items():
         folder = os.path.join(ROOT, "app") if key == "index" else os.path.join(ROOT, "app", key)
         os.makedirs(folder, exist_ok=True)
-        scripts = [vendored.get(u, u) for u in page["ext_scripts"]]
+        scripts = [vendored.get(u, u) for u in page["ext_scripts"] if u not in descartados]
         if page["inline_scripts"]:
             scripts.append("/widgets/%s.js" % key)
         open(os.path.join(folder, "page.tsx"), "w", encoding="utf-8").write(
@@ -821,6 +888,8 @@ def main():
     print("imagenes descargadas a public/images: %d ficheros" % len(IMAGES))
     if vendored:
         print("scripts de terceros traidos a public/widgets/vendor: %d" % len(vendored))
+    if descartados:
+        print("scripts de terceros sustituidos por CSS compilado: %d" % len(descartados))
 
 
 if __name__ == "__main__":

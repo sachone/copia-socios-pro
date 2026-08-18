@@ -32,5 +32,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <PageBody html={content.html} bodyClass={BODY_CLASS} scripts={["/widgets/vendor/tailwindcss.js", "/widgets/planes-y-precios.js"]} />;
+  return <PageBody html={content.html} bodyClass={BODY_CLASS} scripts={["/widgets/planes-y-precios.js"]} />;
 }
