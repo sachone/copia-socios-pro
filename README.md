@@ -19,7 +19,7 @@ npm run build && npm start
 | `components/` | Cabecera, pie y la capa de JavaScript que sustituye a la de Elementor |
 | `content/` | El HTML de cada página, la cabecera, el pie y el JSON-LD |
 | `styles/shared/common.css` | El CSS idéntico en las 50 páginas (tema, Elementor, tipografías, kit global); se importa una vez desde `app/layout.tsx` y el navegador lo cachea en toda la navegación |
-| `styles/shared/astra-*.css` | Las 5 variantes del CSS inline de Astra, deduplicadas por contenido |
+| `styles/shared/tema-*.css` | Las 5 variantes del CSS inline del tema, deduplicadas por contenido |
 | `styles/pages/` | Solo lo que cambia en cada página frente a lo anterior: su CSS propio de Elementor |
 | `styles/site-overrides.css` | Lo único de `styles/` escrito a mano: reglas que suplen al JS de Elementor |
 | `public/fonts/` | Poppins, Roboto y Roboto Slab, ya recortadas a los pesos que se usan de verdad |
@@ -71,7 +71,7 @@ alternativa —reescribir 50 páginas de Elementor como componentes React— no
 habría dado un resultado idéntico.
 
 **No se ha traído el JavaScript de WordPress.** En vez de cargar jQuery,
-SmartMenus y el bundle de Elementor (~500 KB), `components/ElementorRuntime.tsx`
+SmartMenus y el bundle de Elementor (~500 KB), `components/BloquesRuntime.tsx`
 y `components/Header.tsx` reimplementan lo poco que hace falta:
 
 - menú hamburguesa y submenús desplegables (`Header.tsx`);
@@ -112,7 +112,7 @@ rotas, fuente y peso computados) para no perder fidelidad visual:
    post/página es distinto de verdad. Por eso el CSS se reparte en tres
    capas: `styles/shared/common.css` (194 KB, se importa una vez desde
    `app/layout.tsx` y el navegador lo cachea en el resto de la navegación),
-   `styles/shared/astra-*.css` (la variante que le toca a cada página, 5
+   `styles/shared/tema-*.css` (la variante que le toca a cada página, 5
    ficheros compartidos en vez de 50 copias) y `styles/pages/<ruta>.css`
    (solo lo genuinamente propio de esa página: ~14 KB de media, antes 436 KB).
 4. **Solo se precargan 2 tipografías**, no las 5: la del titular (Poppins
@@ -211,6 +211,60 @@ normativa, no vale "todo activado salvo que la persona diga que no"—.
   ```
 
   Móntalo en `app/layout.tsx` junto a `<CookieConsent />`.
+
+## Sin huella del CMS
+
+El clon delataba su origen en cada `div`: `elementor-element`, `ast-desktop`,
+`wp-image-123`, `data-elementor-type`. No es una vulnerabilidad —detrás de un
+host estático no hay PHP que atacar— pero lo primero que hace cualquier escáner
+es identificar la pila, y no se gana nada confirmándole la sospecha. Además lee
+como un volcado, y son muchos bytes.
+
+Lo hace `tools/generar.py` en una pasada final (`debrand_html()` /
+`debrand_css()`), mecánicamente y sobre HTML y CSS a la vez, que es la única
+forma de que no se descuadren. Dos operaciones distintas:
+
+- **Podar** lo que no pinta nadie: **396 de 1468** tokens de clase (`bl-widget-…`
+  numerados, `attachment-full`, la versión del tema) que ninguna regla del CSS
+  final, ningún componente propio y ningún selector por subcadena referencia.
+  Quitarlos no puede cambiar el render. Las clases propias del sitio
+  (`card-wallet`, `btn-accent`) se quedan: son vocabulario de su dueño, no huella.
+- **Traducir** lo que sí pinta: `elementor-` → `bl-`, `ast-`/`astra-` → `tema-`,
+  `wp-` → `s-`, `e-` → `ui-`, `menu-item` → `nav-item`. La coincidencia es por
+  *prefijo de token*, nunca por subcadena: un reemplazo ciego de `wp` por `s`
+  convertiría `swiper` en `ssiper`.
+
+Va con red: `comprobar_colisiones()` aborta la generación si dos tokens
+distintos fueran a acabar con el mismo nombre —saltó de verdad con `e-grid` y
+`elementor-grid`, que iban los dos a `bl-grid` y habrían fundido estilos sin
+relación—. Por eso `e-` va a `ui-` y no a `bl-`.
+
+Alcanza también a lo que no es una clase, que es donde es fácil dejarse cosas:
+`id`, los atributos que apuntan a un id (`for`, `aria-controls`,
+`aria-labelledby`), los `data-*` del constructor (`data-elementor-type` lo
+selecciona el CSS, así que se renombra en los dos lados; `data-elementor-post-type`
+no lo usa nadie y se elimina), las custom properties (`--e-column-gap`,
+`--ast-…`), los nombres de `@keyframes` con sus `animation-name`, los selectores
+por subcadena (`[class*="elementor-size-"]`, que si no se traduce deja de
+coincidir con las clases recién renombradas), los `name` de los campos del
+formulario (`form_fields[…]` → `campos[…]`, con su backend), las clases de
+`<body>`, y los comentarios `/*! … */` del proveedor, que los minificadores
+respetan a propósito y llegaban al navegador nombrando hasta la versión de la
+licencia Pro.
+
+Antes de todo eso se normalizan las comillas de los atributos a dobles: el CMS
+mezclaba `class="x"` y `class='x'`, y cada regex que lee atributos tendría que
+cubrir las dos o se dejaría alguna sin avisar.
+
+**Resultado:** cero menciones al CMS en el HTML, el CSS y el JS que se sirven
+—comprobado contando *tokens* y no subcadenas, porque `arrastrar` contiene
+`astra` y produce falsas alarmas—. De propina, `common.css` baja de 195 a
+176 KB y el HTML de una página tipo de 32 a 27 KB.
+
+Lo único que sigue nombrando al original son los comentarios de los ficheros
+escritos a mano y este README, que explican de dónde sale todo esto. No se
+sirven al navegador (se comprobó sobre los bundles compilados) y quitarlos solo
+haría el código más difícil de mantener.
 
 ## Seguridad
 

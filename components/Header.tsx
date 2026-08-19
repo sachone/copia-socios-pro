@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import header from "@/content/header.json";
 
 /**
- * Cabecera del sitio (plantilla de Elementor `elementor-location-header`).
+ * Cabecera del sitio (plantilla de Elementor `bl-location-header`).
  *
  * El HTML se inyecta tal cual salio de WordPress para conservar el diseno
  * exacto. Lo unico que se calcula aqui es:
@@ -18,16 +18,16 @@ function withActiveState(html: string, pathname: string): string {
   const path = pathname.endsWith("/") ? pathname : pathname + "/";
 
   return html.replace(
-    /<li class="(menu-item[^"]*)"><a ([^>]*?)href="([^"]*)"([^>]*)>/g,
+    /<li class="(nav-item[^"]*)"><a ([^>]*?)href="([^"]*)"([^>]*)>/g,
     (match, liClass: string, pre: string, href: string, post: string) => {
       const target = href.endsWith("/") ? href : href + "/";
       if (target !== path) return match;
 
-      const isSub = /elementor-sub-item/.test(pre + post);
-      const nextLi = `${liClass} current-menu-item current_page_item`;
+      const isSub = /bl-sub-item/.test(pre + post);
+      const nextLi = `${liClass} nav-item-actual pagina-actual`;
       const nextA = `${pre}href="${href}" aria-current="page"${post}`.replace(
         /class="([^"]*)"/,
-        (_m, c: string) => `class="${c}${isSub ? "" : " elementor-item-active"}"`,
+        (_m, c: string) => `class="${c}${isSub ? "" : " bl-item-active"}"`,
       );
       return `<li class="${nextLi}"><a ${nextA}>`;
     },
@@ -44,12 +44,12 @@ export default function Header() {
     const root = ref.current;
     if (!root) return;
 
-    const toggle = root.querySelector<HTMLElement>(".elementor-menu-toggle");
-    // Ojo: `.elementor-nav-menu--dropdown` tambien lo llevan los <ul> de submenu,
+    const toggle = root.querySelector<HTMLElement>(".bl-menu-toggle");
+    // Ojo: `.bl-nav-menu--dropdown` tambien lo llevan los <ul> de submenu,
     // asi que hay que apuntar al <nav> contenedor del menu movil.
-    const dropdown = root.querySelector<HTMLElement>("nav.elementor-nav-menu--dropdown");
+    const dropdown = root.querySelector<HTMLElement>("nav.bl-nav-menu--dropdown");
 
-    // El widget lleva la clase `elementor-nav-menu--stretch`: en el original,
+    // El widget lleva la clase `bl-nav-menu--stretch`: en el original,
     // el desplegable del movil ocupa todo el ancho de la ventana. Pero quien
     // lo estira es el JavaScript de Elementor, que este clon no carga (ver
     // README), asi que el desplegable se quedaba tomando como referencia el
@@ -61,7 +61,7 @@ export default function Header() {
     // un desplazamiento negativo que lo devuelve al borde izquierdo, y bajarlo
     // justo por debajo del boton.
     const stretchDropdown = () => {
-      const widget = dropdown?.closest<HTMLElement>(".elementor-nav-menu--stretch");
+      const widget = dropdown?.closest<HTMLElement>(".bl-nav-menu--stretch");
       if (!dropdown || !widget) return;
       dropdown.style.width = `${document.documentElement.clientWidth}px`;
       dropdown.style.left = `${-widget.getBoundingClientRect().left}px`;
@@ -69,18 +69,18 @@ export default function Header() {
     };
 
     const closeAll = () => {
-      toggle?.classList.remove("elementor-active");
+      toggle?.classList.remove("bl-active");
       toggle?.setAttribute("aria-expanded", "false");
       dropdown?.setAttribute("aria-hidden", "true");
     };
 
     const onToggle = () => {
       if (!toggle || !dropdown) return;
-      const open = !toggle.classList.contains("elementor-active");
+      const open = !toggle.classList.contains("bl-active");
       // Se recalcula al abrir, no solo al montar: entre medias ha podido
       // cambiar el ancho de la ventana o aparecer la barra de scroll.
       if (open) stretchDropdown();
-      toggle.classList.toggle("elementor-active", open);
+      toggle.classList.toggle("bl-active", open);
       toggle.setAttribute("aria-expanded", String(open));
       dropdown.setAttribute("aria-hidden", String(!open));
       // Elementor limita la altura del desplegable con esta variable; el
@@ -92,7 +92,7 @@ export default function Header() {
     const onDropdownClick = (e: Event) => {
       const arrow = (e.target as HTMLElement).closest(".sub-arrow");
       const link = (e.target as HTMLElement).closest("a");
-      const li = (e.target as HTMLElement).closest("li.menu-item-has-children");
+      const li = (e.target as HTMLElement).closest("li.nav-item-has-children");
       if (!li) return;
 
       // Un enlace de primer nivel sin href tambien despliega su submenu.
@@ -100,8 +100,8 @@ export default function Header() {
       if (!arrow && !isBareParent) return;
 
       e.preventDefault();
-      const open = !li.classList.contains("menu-item-open");
-      li.classList.toggle("menu-item-open", open);
+      const open = !li.classList.contains("nav-item-open");
+      li.classList.toggle("nav-item-open", open);
       li.querySelector("a")?.setAttribute("aria-expanded", String(open));
     };
 

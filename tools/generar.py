@@ -171,6 +171,13 @@ def clean(html):
     # Esa clave es de su duena y esta atada a su dominio: no pinta nada
     # republicada aqui, asi que se quita el campo entero del formulario.
     html = remove_balanced_div(html, "elementor-field-type-recaptcha")
+    # Campos ocultos que el constructor de formularios usaba para hablar con
+    # su propio backend: `post_id`/`queried_id` llevan ademas el ID del post en
+    # el WordPress original. Aqui no los lee nadie (ver app/api/contact), y son
+    # de las cosas que mas delatan de donde sale esto.
+    html = re.sub(
+        r'<input[^>]*\btype="hidden"[^>]*\bname="(?:post_id|form_id|referer_title|queried_id)"[^>]*>',
+        "", html)
     # El patron del campo telefono es una regex invalida en el modo "v" de
     # los navegadores modernos (error en consola en cada envio, aunque no
     # llega a bloquear el formulario). Es un fallo del propio original que no
@@ -416,6 +423,22 @@ def localize_fonts(css):
     return FONT_RE.sub(repl, css)
 
 
+def quitar_source_url(css):
+    """Quita los `/*# sourceURL=... */`. Son una ayuda para depurar del CSS
+    original y nombran la hoja del tema de la que salio cada bloque."""
+    return re.sub(r"/\*#\s*sourceURL=[^*]*\*/", "", css)
+
+
+def quitar_banners(css):
+    """Elimina los comentarios `/*! ... */` del proveedor.
+
+    Son los que los minificadores respetan a proposito, asi que llegaban
+    intactos al navegador: nombraban el constructor y hasta la version de su
+    licencia Pro. Son comentarios: quitarlos no cambia una sola regla.
+    """
+    return re.sub(r"/\*![^*]*\*+(?:[^/*][^*]*\*+)*/", "", css)
+
+
 def build_css(items, head, needed_fonts):
     """Concatena las hojas de una pagina en el orden en que aparecen en su <head>."""
     out = []
@@ -427,13 +450,18 @@ def build_css(items, head, needed_fonts):
                 if value.endswith(suffix):
                     css = subset_google_font_css(css, needed_fonts[family])
                     break
+            # Solo el nombre del fichero, no su ruta: la ruta completa
+            # (/wp-content/plugins/<constructor>/...) era de lo que mas
+            # delataba el origen, y para orientarse basta el nombre.
             out.append("/* === %s === */\n%s"
-                       % (value.replace(ORIGIN, ""), localize_fonts(absolutize_css(css, value))))
+                       % (value.rsplit("/", 1)[-1].split("?")[0],
+                          quitar_banners(localize_fonts(absolutize_css(css, value)))))
         else:
             m = re.search(r'<style id="%s"[^>]*>(.*?)</style>' % re.escape(value), head, re.S)
             if m and m.group(1).strip():
                 out.append("/* === inline: %s === */\n%s"
-                           % (value, localize_fonts(absolutize_css(m.group(1), ORIGIN + "/"))))
+                           % (traducir_token(value),
+                              quitar_source_url(localize_fonts(absolutize_css(m.group(1), ORIGIN + "/")))))
     return "\n\n".join(out)
 
 
@@ -614,13 +642,179 @@ def add_submenu_arrows(header):
 
 # ------------------------------------------------------------------ main
 
+
+# ------------------------------------------------- huella del CMS
+
+# El clon delataba su origen en cada div: `elementor-element`, `ast-desktop`,
+# `wp-image-123`. No es una vulnerabilidad -detras de un host estatico no hay
+# PHP que atacar- pero lo primero que hace cualquier escaner es identificar la
+# pila, y no se gana nada confirmandole la sospecha. Ademas lee como un
+# volcado, y son muchos bytes: "elementor" son diez caracteres repetidos miles
+# de veces entre HTML y CSS.
+#
+# Se hace aqui, mecanicamente, porque HTML y CSS salen de la misma pasada y no
+# pueden descuadrarse. A mano se descuadrarian a la primera.
+
+# Traducciones por PREFIJO DE TOKEN, de lo mas especifico a lo menos: si "wp"
+# fuera antes que "wp-image", `wp-image-12` acabaria como `s-image-12`.
+SUSTITUCIONES = [
+    # Aqui el nombre va de sufijo, no de prefijo: es el icono social de esa
+    # marca. La clase no la usa ninguna pagina, pero seguia nombrandola.
+    ("elementor-social-icon-elementor", "bl-social-icon-marca"),
+    ("elementor-social-icon-wordpress", "bl-social-icon-cms"),
+    ("elementor", "bl"),          # bl = bloque
+    ("eicon", "icono"),
+    ("astra", "tema"),
+    ("wp-image", "img"),
+    ("wp-theme-astra", "s-tema"),      # el nombre del tema iba dentro del token
+    ("page-template", "plantilla"),
+    ("page-id", "pag"),
+    ("current-menu-ancestor", "nav-item-ancestro"),
+    ("current-menu-parent", "nav-item-padre"),
+    ("current-menu-item", "nav-item-actual"),
+    ("current_page_item", "pagina-actual"),
+    ("menu-item", "nav-item"),
+    ("post", "entrada"),
+    ("wp", "s"),                  # s = sitio
+    ("ast", "tema"),
+    # Destino distinto al de "elementor" a proposito: los dos prefijos existen
+    # en paralelo (`e-grid` y `elementor-grid` son clases diferentes) y
+    # mandarlos al mismo sitio fusionaria estilos sin relacion. Lo caza
+    # comprobar_colisiones(), que es justo para lo que esta.
+    ("e", "ui"),
+]
+
+# `data-*` que conserva nuestro propio JS (ver components/): el resto de los
+# que delatan al CMS se quedan igual porque ninguno lo hace.
+ATRIBUTOS_CON_ID = ("for", "aria-controls", "aria-labelledby")
+
+# `data-*` que delatan al constructor. Los dos primeros los selecciona el CSS
+# (`[data-elementor-type="loop-item"]`, `[data-elementor-id]`), asi que se
+# renombran a la vez en HTML y CSS; el tercero no lo usa nadie y se va entero.
+# Los demas data-* del original (`data-id`, `data-settings`, `data-widget_type`)
+# no llevan el nombre del proveedor y los lee el CSS o components/, asi que se
+# quedan como estan.
+ATRIBUTOS_RENOMBRADOS = {"data-elementor-type": "data-bl-type",
+                         "data-elementor-id": "data-bl-id"}
+ATRIBUTOS_ELIMINADOS = ("data-elementor-post-type",)
+
+
+def traducir_token(token):
+    """Traduce un token si empieza por uno de los prefijos.
+
+    La coincidencia es por *prefijo de token*, nunca por subcadena: un
+    reemplazo ciego de "wp" por "s" convertiria `swiper` en `ssiper`. Por eso
+    se exige que el prefijo empiece en la posicion 0 y que lo siguiente sea
+    `-`, `_` o el final del token.
+    """
+    for viejo, nuevo in SUSTITUCIONES:
+        if token == viejo:
+            return nuevo
+        if token.startswith(viejo) and token[len(viejo)] in "-_":
+            return nuevo + token[len(viejo):]
+    return token
+
+
+def comprobar_colisiones(tokens):
+    """Dos tokens distintos que acaben con el mismo nombre fundirian estilos
+    que no tienen nada que ver. Barato de comprobar, caro de descubrir tarde."""
+    destino = {}
+    choques = []
+    for t in sorted(tokens):
+        n = traducir_token(t)
+        if n == t:
+            continue
+        if n in destino and destino[n] != t:
+            choques.append((destino[n], t, n))
+        destino[n] = t
+    return choques
+
+
+def normalizar_comillas(html):
+    """Todos los atributos con comillas dobles.
+
+    Va antes que nada porque elimina una familia entera de fallos silenciosos:
+    el CMS mezcla `class="x"` y `class='x'`, y cada regex que lea atributos
+    tendria que cubrir las dos o se dejaria alguno por el camino sin avisar.
+    Solo se tocan los valores que no contienen comillas dobles dentro.
+    """
+    return re.sub(r"(\s[\w:-]+)='([^'\"]*)'", r'\1="\2"', html)
+
+
+def tokens_de_clase(html):
+    vistos = set()
+    for m in re.finditer(r'class="([^"]*)"', html):
+        vistos.update(m.group(1).split())
+    return vistos
+
+
+def debrand_html(html, inertes):
+    """Poda las clases que no pinta nadie y traduce las que si."""
+    html = normalizar_comillas(html)
+
+    def clase(m):
+        vivos = [traducir_token(t) for t in m.group(1).split() if t not in inertes]
+        return 'class="%s"' % " ".join(vivos) if vivos else ""
+
+    html = re.sub(r'class="([^"]*)"', clase, html)
+    html = re.sub(r'id="([^"]*)"', lambda m: 'id="%s"' % traducir_token(m.group(1)), html)
+    for attr in ATRIBUTOS_CON_ID:
+        html = re.sub(r'%s="([^"]*)"' % attr,
+                      lambda m, a=attr: '%s="%s"' % (a, traducir_token(m.group(1))), html)
+    # `form_fields[...]` es la convencion del constructor de formularios; el
+    # backend propio la lee en app/api/contact/route.ts, que se renombra igual.
+    html = html.replace('name="form_fields[', 'name="campos[')
+    for attr in ATRIBUTOS_ELIMINADOS:
+        html = re.sub(r'\s*%s="[^"]*"' % re.escape(attr), "", html)
+    for viejo, nuevo in ATRIBUTOS_RENOMBRADOS.items():
+        html = re.sub(r'%s="([^"]*)"' % re.escape(viejo),
+                      lambda m, n=nuevo: '%s="%s"' % (n, traducir_token(m.group(1))), html)
+    return html
+
+
+def debrand_css(css, keyframes):
+    """Traduce selectores de clase, custom properties, nombres de animacion y
+    los selectores por subcadena, que si se quedan sin traducir dejan de
+    coincidir con las clases que se acaban de renombrar."""
+    partes, resto = [], css
+    # Se salta el contenido de url(): una imagen cuyo nombre empezara por un
+    # prefijo mapeado se renombraria en la referencia pero no en el disco.
+    for trozo in re.split(r"(url\([^)]*\))", resto):
+        if trozo.startswith("url("):
+            partes.append(trozo)
+            continue
+        trozo = re.sub(r"\.(-?[_a-zA-Z][\w-]*)",
+                       lambda m: "." + traducir_token(m.group(1)), trozo)
+        trozo = re.sub(r"--([\w-]+)",
+                       lambda m: "--" + traducir_token(m.group(1)), trozo)
+        # Selectores de id. Los colores hexadecimales no se ven afectados: en
+        # `#eee` o `#e0e0e0` el caracter que sigue al prefijo no es `-` ni `_`,
+        # asi que traducir_token() los deja igual.
+        trozo = re.sub(r"#(-?[_a-zA-Z][\w-]*)",
+                       lambda m: "#" + traducir_token(m.group(1)), trozo)
+        # Familias de iconos del tema. Ningun @font-face las declara -solo se
+        # bajaron Poppins, Roboto, Roboto Slab e Inter-, asi que son referencias
+        # muertas y renombrarlas no cambia lo que se pinta.
+        for viejo, nuevo in (("Astra", "tema"), ("eicons", "iconos")):
+            trozo = re.sub(r"(font-family:\s*)%s\b" % viejo, r"\g<1>" + nuevo, trozo)
+        trozo = re.sub(r'(\[class[\^$*~|]?=)("?)([^"\]]+)\2\]',
+                       lambda m: "%s%s%s%s]" % (m.group(1), m.group(2),
+                                                traducir_token(m.group(3)), m.group(2)), trozo)
+        for viejo, nuevo in ATRIBUTOS_RENOMBRADOS.items():
+            trozo = trozo.replace("[" + viejo, "[" + nuevo)
+        for viejo, nuevo in keyframes.items():
+            trozo = re.sub(r"\b%s\b" % re.escape(viejo), nuevo, trozo)
+        partes.append(trozo)
+    return "".join(partes)
+
+
 PAGE_TEMPLATE = '''import type {{ Metadata }} from "next";
 import PageBody from "@/components/PageBody";
 import {{ robotsMeta }} from "@/lib/indexacion";
 import content from "@/content/pages/{key}.json";
 {astra_import}import "@/styles/pages/{key}.css";
 
-// Clases que WordPress/Astra ponen en <body> para esta pagina concreta.
+// Clases que el original pone en <body> para esta pagina concreta.
 const BODY_CLASS = {body_class};
 
 {metadata}
@@ -715,8 +909,8 @@ def main():
     common_order = [it for it in pages["index"]["css_items"] if it in common_keys]
     common_css = (
         "/* Generado por tools/generar.py: no editar a mano.\n"
-        "   Hojas identicas en las 50 paginas del original: tema Astra, "
-        "Elementor,\n   tipografias (ya recortadas a los pesos usados) y el kit "
+        "   Hojas identicas en las 50 paginas del original: tema, "
+        "constructor,\n   tipografias (ya recortadas a los pesos usados) y el kit "
         "global.\n   Se importa una sola vez desde app/layout.tsx para que el "
         "navegador\n   la cachee en toda la navegacion. */\n\n"
         + build_css(common_order, pages["index"]["head"], needed_fonts)
@@ -736,12 +930,12 @@ def main():
             return None
         css = build_css(variant_items, page["head"], needed_fonts)
         digest = hashlib.md5(css.encode()).hexdigest()[:8]
-        name = "astra-%s.css" % digest
+        name = "tema-%s.css" % digest
         if digest not in astra_variants:
             astra_variants[digest] = name
             open(os.path.join(out_shared, name), "w", encoding="utf-8").write(
                 "/* Generado por tools/generar.py: no editar a mano.\n"
-                "   Una de las variantes del CSS inline de Astra: cambia segun la\n"
+                "   Una de las variantes del CSS inline del tema: cambia segun la\n"
                 "   plantilla, pero solo hay 5 distintas en las 50 paginas, asi que\n"
                 "   se comparte un fichero por variante en vez de repetirla. */\n\n"
                 + css)
@@ -756,10 +950,10 @@ def main():
                       if it not in common_keys and it[1] not in PAGE_SPECIFIC_INLINE]
         blocks = [
             "/* Generado por tools/generar.py: no editar a mano.\n"
-            "   El CSS propio de este post/pagina en Elementor: lo unico que no\n"
-            "   comparte con ninguna otra pagina. El grueso esta en\n"
-            "   styles/shared/common.css (importado desde app/layout.tsx) y en\n"
-            "   %s (la variante de Astra de esta plantilla). */"
+            "   El CSS propio de esta pagina: lo unico que no comparte con\n"
+            "   ninguna otra. El grueso esta en styles/shared/common.css\n"
+            "   (importado desde app/layout.tsx) y en\n"
+            "   %s (la variante de tema de esta plantilla). */"
             % (page["astra_file"] or "(sin variante de Astra)"),
             external_font_imports(page["head"]),
             build_css(page_items, page["head"], needed_fonts),
@@ -878,7 +1072,7 @@ def main():
     for key, page in pages.items():
         if not page["inline_scripts"]:
             continue
-        banner = ("// Extraido de los widgets HTML de Elementor en %s del original.\n"
+        banner = ("// Extraido de los widgets HTML de %s en el sitio original.\n"
                   "// Va en un fichero aparte porque el HTML se inyecta con innerHTML\n"
                   "// y los <script> insertados asi no se ejecutan.\n\n" % page["route"])
         open(os.path.join(out_widgets, key + ".js"), "w", encoding="utf-8").write(
@@ -912,6 +1106,82 @@ def main():
                 astra_import=('import "@/styles/shared/%s";\n' % page["astra_file"]
                               if page["astra_file"] else ""),
             ))
+
+    # --- borrar la huella del CMS (ver SUSTITUCIONES y debrand_html/_css)
+    #
+    # Va al final, sobre lo ya generado, porque todo lo anterior busca en el
+    # marcado del original por sus nombres de siempre: si se renombrara antes,
+    # cada regex de limpieza dejaria de encontrar lo que busca.
+    ficheros_html = ([os.path.join(ROOT, "content", "pages", k + ".json") for k in pages]
+                     + [os.path.join(ROOT, "content", "header.json"),
+                        os.path.join(ROOT, "content", "footer.json")])
+    css_generado = (glob.glob(os.path.join(ROOT, "styles", "shared", "*.css"))
+                    + glob.glob(os.path.join(ROOT, "styles", "pages", "*.css")))
+
+    # Que clases pinta algo: las que aparecen en algun selector del CSS final,
+    # las que referencia codigo propio (por su nombre viejo o por el nuevo, que
+    # es como quedan tras este paso) y las que caza un selector por subcadena.
+    css_todo = "".join(open(f, encoding="utf-8").read() for f in css_generado)
+    css_todo += open(os.path.join(ROOT, "styles", "site-overrides.css"), encoding="utf-8").read()
+    en_css = set(re.findall(r"\.(-?[_a-zA-Z][\w-]*)", css_todo))
+    subcadenas = set(re.findall(r'\[class[\^$*~|]?=["\']?([^"\']+?)["\']?\]', css_todo))
+    propio = ""
+    for patron in ("components/*.tsx", "lib/*.ts", "app/layout.tsx", "public/widgets/*.js",
+                   "styles/site-overrides.css"):
+        for f in glob.glob(os.path.join(ROOT, patron)):
+            propio += open(f, encoding="utf-8").read()
+
+    todos_tokens = set()
+    for f in ficheros_html:
+        todos_tokens |= tokens_de_clase(normalizar_comillas(json.load(open(f, encoding="utf-8"))["html"]))
+    for clases in body_classes.values():
+        todos_tokens |= set(clases.split())
+
+    def esta_viva(t):
+        return (t in en_css or t in propio or traducir_token(t) in propio
+                or any(sc and sc in t for sc in subcadenas))
+
+    # Solo se podan las que delatan al CMS: las clases propias del sitio
+    # (`card-wallet`, `btn-accent`...) son vocabulario de su dueno, no huella,
+    # y no cuesta nada dejarlas.
+    inertes = {t for t in todos_tokens if not esta_viva(t) and traducir_token(t) != t}
+
+    choques = comprobar_colisiones(todos_tokens - inertes)
+    if choques:
+        print("AVISO - dos tokens distintos acabarian con el mismo nombre:")
+        for a, b, n in choques:
+            print("   %s + %s -> %s" % (a, b, n))
+        raise SystemExit("colision de nombres: revisa SUSTITUCIONES antes de seguir")
+
+    keyframes = {}
+    for nombre in set(re.findall(r"@keyframes\s+([\w-]+)", css_todo)):
+        nuevo = traducir_token(nombre)
+        if nuevo != nombre:
+            keyframes[nombre] = nuevo
+
+    for f in ficheros_html:
+        datos = json.load(open(f, encoding="utf-8"))
+        datos["html"] = debrand_html(datos["html"], inertes)
+        json.dump(datos, open(f, "w", encoding="utf-8"), ensure_ascii=False)
+
+    for f in css_generado:
+        # Leer a una variable antes de abrir en escritura: `open(f,"w").write(
+        # leer(f))` trunca el fichero al evaluar el open, antes de que la
+        # lectura llegue a ocurrir, y deja la hoja vacia sin dar ningun error.
+        css_hoja = open(f, encoding="utf-8").read()
+        open(f, "w", encoding="utf-8").write(debrand_css(css_hoja, keyframes))
+
+    # Las clases de <body> viven en una constante de cada page.tsx.
+    for key in pages:
+        f = os.path.join(ROOT, "app", "page.tsx") if key == "index" else os.path.join(ROOT, "app", key, "page.tsx")
+        txt = open(f, encoding="utf-8").read()
+        txt = re.sub(r'(const BODY_CLASS = ")([^"]*)(")',
+                     lambda m: m.group(1) + " ".join(
+                         traducir_token(t) for t in m.group(2).split() if t not in inertes) + m.group(3),
+                     txt)
+        open(f, "w", encoding="utf-8").write(txt)
+
+    print("clases inertes del CMS podadas: %d de %d tokens" % (len(inertes), len(todos_tokens)))
 
     common_kb = os.path.getsize(os.path.join(out_shared, "common.css")) / 1024
     media_kb = sum(os.path.getsize(os.path.join(out_css, k + ".css")) for k in pages) / len(pages) / 1024

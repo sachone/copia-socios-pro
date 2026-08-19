@@ -8,20 +8,20 @@ import { useEffect } from "react";
  *
  *  1. Clases de <body> propias de cada pagina (Astra las usa para el layout).
  *  2. Animaciones de entrada (`fadeInDown`, `fadeInRight`, ...): Elementor deja
- *     los elementos con `elementor-invisible` hasta que entran en pantalla.
+ *     los elementos con `bl-invisible` hasta que entran en pantalla.
  *  3. Widget de entradas con proporcion fija: Elementor marca el contenedor y
  *     decide, imagen a imagen, si debe recortarse a lo alto o a lo ancho.
  *  4. Formularios de Elementor Pro: se envian a app/api/contact/route.ts en
  *     vez de a WordPress (ver ese fichero para el backend real, con Resend).
  */
-export default function ElementorRuntime({ bodyClass }: { bodyClass: string }) {
+export default function BloquesRuntime({ bodyClass }: { bodyClass: string }) {
   useEffect(() => {
     document.body.className = bodyClass;
   }, [bodyClass]);
 
   useEffect(() => {
     const targets = Array.from(
-      document.querySelectorAll<HTMLElement>(".elementor-invisible[data-settings]"),
+      document.querySelectorAll<HTMLElement>(".bl-invisible[data-settings]"),
     );
 
     const reveal = (el: HTMLElement) => {
@@ -31,7 +31,7 @@ export default function ElementorRuntime({ bodyClass }: { bodyClass: string }) {
       } catch {
         /* data-settings malformado: se muestra sin animacion */
       }
-      el.classList.remove("elementor-invisible");
+      el.classList.remove("bl-invisible");
       if (animation) el.classList.add("animated", animation);
     };
 
@@ -59,16 +59,16 @@ export default function ElementorRuntime({ bodyClass }: { bodyClass: string }) {
     // Widget "Entradas" con proporcion de imagen fija. El CSS de la pagina define
     // `padding-bottom: calc(<ratio> * 100%)` en la miniatura; Elementor marca
     // entonces el contenedor y ajusta cada imagen segun su propia proporcion.
-    const containers = document.querySelectorAll<HTMLElement>(".elementor-posts-container");
+    const containers = document.querySelectorAll<HTMLElement>(".bl-posts-container");
 
     const fitThumbnails = (container: HTMLElement, ratio: number) => {
-      container.querySelectorAll<HTMLElement>(".elementor-post__thumbnail").forEach((thumb) => {
+      container.querySelectorAll<HTMLElement>(".bl-post__thumbnail").forEach((thumb) => {
         const img = thumb.querySelector("img");
         if (!img) return;
         const apply = () => {
           if (!img.naturalWidth) return;
           thumb.classList.toggle(
-            "elementor-fit-height",
+            "bl-fit-height",
             img.naturalHeight / img.naturalWidth < ratio,
           );
         };
@@ -78,12 +78,12 @@ export default function ElementorRuntime({ bodyClass }: { bodyClass: string }) {
     };
 
     containers.forEach((container) => {
-      const thumb = container.querySelector<HTMLElement>(".elementor-post__thumbnail");
+      const thumb = container.querySelector<HTMLElement>(".bl-post__thumbnail");
       if (!thumb) return;
       const padding = parseFloat(getComputedStyle(thumb).paddingBottom);
       if (!padding || !thumb.offsetWidth) return;
       const ratio = padding / thumb.offsetWidth;
-      container.classList.add("elementor-has-item-ratio");
+      container.classList.add("bl-has-item-ratio");
       fitThumbnails(container, ratio);
     });
   }, []);
@@ -92,7 +92,7 @@ export default function ElementorRuntime({ bodyClass }: { bodyClass: string }) {
     // Los formularios del original hacen POST a admin-ajax.php de WordPress.
     // Aqui envian a app/api/contact/route.ts, que reenvia el mensaje por
     // email con Resend (ver ese fichero y .env.example).
-    const forms = Array.from(document.querySelectorAll<HTMLFormElement>(".elementor-form"));
+    const forms = Array.from(document.querySelectorAll<HTMLFormElement>(".bl-form"));
 
     // Un campo invisible para personas: los bots que rellenan formularios a
     // ciegas suelen completar todo lo que encuentran en el HTML. No sustituye
@@ -110,15 +110,15 @@ export default function ElementorRuntime({ bodyClass }: { bodyClass: string }) {
     });
 
     const messageBox = (form: HTMLFormElement, kind: "success" | "danger") => {
-      const cls = `elementor-message-${kind}`;
+      const cls = `bl-message-${kind}`;
       let box = form.querySelector<HTMLElement>(`.${cls}`);
       if (!box) {
         box = document.createElement("div");
-        box.className = `elementor-message ${cls}`;
+        box.className = `bl-message ${cls}`;
         box.setAttribute("role", "alert");
         form.appendChild(box);
       }
-      form.querySelectorAll(".elementor-message").forEach((el) => {
+      form.querySelectorAll(".bl-message").forEach((el) => {
         if (el !== box) el.remove();
       });
       return box;
@@ -126,7 +126,7 @@ export default function ElementorRuntime({ bodyClass }: { bodyClass: string }) {
 
     const onSubmit = async (e: Event) => {
       const form = e.target as HTMLFormElement;
-      if (!form.classList?.contains("elementor-form")) return;
+      if (!form.classList?.contains("bl-form")) return;
       e.preventDefault();
 
       const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');

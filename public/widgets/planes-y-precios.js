@@ -1,4 +1,4 @@
-// Extraido de los widgets HTML de Elementor en /planes-y-precios/ del original.
+// Extraido de los widgets HTML de /planes-y-precios/ en el sitio original.
 // Va en un fichero aparte porque el HTML se inyecta con innerHTML
 // y los <script> insertados asi no se ejecutan.
 

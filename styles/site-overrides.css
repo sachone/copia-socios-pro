@@ -1,64 +1,64 @@
 /* ---------------------------------------------------------------------------
-   Comportamientos que en el sitio original aporta JavaScript (SmartMenus de
-   Elementor Pro). Aqui se resuelven con CSS + un poco de JS propio para no
-   arrastrar jQuery ni el bundle completo de Elementor.
+   Comportamientos que en el sitio original aporta JavaScript (el menu del
+   constructor de paginas). Aqui se resuelven con CSS + un poco de JS propio
+   para no arrastrar jQuery ni el bundle completo del original.
    --------------------------------------------------------------------------- */
 
 /* --- Submenus del menu principal (escritorio) --- */
-.elementor-nav-menu--main .elementor-nav-menu > li {
+.bl-nav-menu--main .bl-nav-menu > li {
   position: relative;
 }
-.elementor-nav-menu--main .elementor-nav-menu ul.sub-menu {
+.bl-nav-menu--main .bl-nav-menu ul.sub-menu {
   display: none;
   z-index: 9999;
 }
-.elementor-nav-menu--main .elementor-nav-menu > li:hover > ul.sub-menu,
-.elementor-nav-menu--main .elementor-nav-menu > li:focus-within > ul.sub-menu {
+.bl-nav-menu--main .bl-nav-menu > li:hover > ul.sub-menu,
+.bl-nav-menu--main .bl-nav-menu > li:focus-within > ul.sub-menu {
   display: block;
 }
 
 /* --- Menu desplegable (movil / tablet) --- */
-.elementor-nav-menu--dropdown ul.sub-menu {
+.bl-nav-menu--dropdown ul.sub-menu {
   display: none;
   position: static;
   width: 100%;
 }
-.elementor-nav-menu--dropdown li.menu-item-open > ul.sub-menu {
+.bl-nav-menu--dropdown li.nav-item-open > ul.sub-menu {
   display: block;
 }
-/* La flecha real es `.sub-arrow` (icono de Elementor). El span vacio que
-   anade el tema Astra no pinta nada, igual que en el original. */
+/* La flecha real es `.sub-arrow`. El span vacio que anade el tema no pinta
+   nada, igual que en el original. */
 .dropdown-menu-toggle {
   display: none;
 }
-.elementor-nav-menu--dropdown .sub-arrow {
+.bl-nav-menu--dropdown .sub-arrow {
   cursor: pointer;
   padding: 0 6px;
 }
-.elementor-nav-menu--dropdown li.menu-item-open > a .sub-arrow .e-font-icon-svg {
+.bl-nav-menu--dropdown li.nav-item-open > a .sub-arrow .ui-font-icon-svg {
   transform: rotate(calc(90deg * var(--direction-multiplier, 1)));
 }
 
-/* --- Animaciones de entrada de Elementor ---
-   Los elementos con `elementor-invisible` se revelan al entrar en pantalla. */
-.elementor-invisible {
+/* --- Animaciones de entrada ---
+   Los elementos con `bl-invisible` se revelan al entrar en pantalla. */
+.bl-invisible {
   visibility: hidden;
 }
 
-/* Reproductor de YouTube diferido (wp-rocket) ya resuelto en el HTML */
+/* Reproductor de YouTube diferido (s-rocket) ya resuelto en el HTML */
 .rll-youtube-player {
   cursor: pointer;
 }
 
-/* --- Formularios (ver components/ElementorRuntime.tsx) ---
-   El original define `.elementor-message` y `.elementor-message-danger` (rojo)
+/* --- Formularios (ver components/BloquesRuntime.tsx) ---
+   El original define `.bl-message` y `.bl-message-danger` (rojo)
    en su propio CSS; aqui solo se añade el color de éxito, que en el original
-   lo pone el propio JS de Elementor en linea. */
-.elementor-message-success {
+   lo pone el propio JS del original en linea. */
+.bl-message-success {
   color: #008a20;
 }
-.elementor-field[disabled],
-button.elementor-button[disabled] {
+.bl-field[disabled],
+button.bl-button[disabled] {
   opacity: 0.6;
   cursor: not-allowed;
 }

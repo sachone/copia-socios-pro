@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
 import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/alta-socios-asociacion.json";
-import "@/styles/shared/astra-a15e2161.css";
+import "@/styles/shared/tema-dc171bc6.css";
 import "@/styles/pages/alta-socios-asociacion.css";
 
-// Clases que WordPress/Astra ponen en <body> para esta pagina concreta.
-const BODY_CLASS = "wp-singular post-template-default single single-post postid-855 single-format-standard wp-custom-logo wp-embed-responsive wp-theme-astra ast-desktop ast-separate-container ast-two-container ast-no-sidebar astra-4.13.3 ast-blog-single-style-1 ast-single-post ast-inherit-site-logo-transparent ast-hfb-header elementor-page-584 ast-normal-title-enabled elementor-default elementor-kit-5";
+// Clases que el original pone en <body> para esta pagina concreta.
+const BODY_CLASS = "s-singular single single-post postid-855 single-format-standard s-custom-logo s-embed-responsive s-tema tema-desktop tema-separate-container tema-two-container tema-no-sidebar tema-single-post tema-inherit-site-logo-transparent tema-hfb-header bl-default bl-kit-5";
 
 export const metadata: Metadata = {
   title: "Alta de socios en una asociación: proceso sencillo y efectivo",

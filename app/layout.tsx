@@ -42,9 +42,9 @@ const jsonldAbsolute = jsonld.raw
 // Clases de <body> comunes a todas las paginas. Cada pagina anade las suyas
 // (ver `BODY_CLASS` en cada `page.tsx`).
 const BASE_BODY_CLASS =
-  "wp-singular wp-custom-logo wp-embed-responsive wp-theme-astra ast-desktop " +
-  "ast-no-sidebar astra-4.13.3 ast-single-post ast-inherit-site-logo-transparent " +
-  "ast-hfb-header elementor-default elementor-kit-5";
+  "s-singular s-custom-logo s-embed-responsive s-tema tema-desktop " +
+  "tema-no-sidebar tema-single-post tema-inherit-site-logo-transparent " +
+  "tema-hfb-header bl-default bl-kit-5";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -1,4 +1,4 @@
-import ElementorRuntime from "./ElementorRuntime";
+import BloquesRuntime from "./BloquesRuntime";
 import WidgetScripts from "./WidgetScripts";
 
 type Props = {
@@ -28,7 +28,7 @@ export default function PageBody({ html, bodyClass, scripts }: Props) {
         }}
       />
       <div dangerouslySetInnerHTML={{ __html: html }} />
-      <ElementorRuntime bodyClass={bodyClass} />
+      <BloquesRuntime bodyClass={bodyClass} />
       {scripts?.length ? <WidgetScripts scripts={scripts} /> : null}
     </>
   );

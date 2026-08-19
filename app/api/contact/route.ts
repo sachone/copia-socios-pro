@@ -3,8 +3,8 @@ import { Resend } from "resend";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 /**
- * Recibe los envíos de los formularios de contacto (`.elementor-form`, ver
- * `components/ElementorRuntime.tsx`) y los manda por email con Resend.
+ * Recibe los envíos de los formularios de contacto (`.bl-form`, ver
+ * `components/BloquesRuntime.tsx`) y los manda por email con Resend.
  *
  * En el original, estos formularios hacían POST a `admin-ajax.php` de
  * WordPress. Aquí no hay WordPress, así que este endpoint ocupa su lugar.
@@ -154,8 +154,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true }); // se finge éxito, sin enviar nada
   }
 
-  const email = String(form.get("form_fields[email]") || "").trim();
-  const name = String(form.get("form_fields[name]") || "").trim();
+  const email = String(form.get("campos[email]") || "").trim();
+  const name = String(form.get("campos[name]") || "").trim();
   if (!name || !email || !EMAIL_RE.test(email)) {
     return NextResponse.json(
       { ok: false, error: "Revisa el nombre y el email: son obligatorios." },
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
 
   const rows: string[] = [];
   for (const [key, value] of form.entries()) {
-    if (!key.startsWith("form_fields[") || !key.endsWith("]")) continue;
+    if (!key.startsWith("campos[") || !key.endsWith("]")) continue;
     const text = String(value);
     if (!text.trim()) continue;
     // Se rechaza en vez de recortar: recortar en silencio le comería texto a
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
     if (rows.length >= MAX_FIELDS) {
       return NextResponse.json({ ok: false, error: "Formulario inválido." }, { status: 400 });
     }
-    const field = key.slice("form_fields[".length, -1);
+    const field = key.slice("campos[".length, -1);
     rows.push(`<tr><td style="padding:4px 12px 4px 0"><strong>${escapeHtml(FIELD_LABELS[field] || field)}</strong></td><td>${escapeHtml(text)}</td></tr>`);
   }
 
