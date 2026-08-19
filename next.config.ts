@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { PERMITIR_INDEXACION } from "./lib/indexacion";
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -56,6 +57,11 @@ const securityHeaders = [
   ...(isProd
     ? [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" }]
     : []),
+  // Mientras el sitio no esté terminado, fuera de los buscadores.
+  // Para publicarlo: pon PERMITIR_INDEXACION a true en lib/indexacion.ts.
+  ...(PERMITIR_INDEXACION
+    ? []
+    : [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]),
 ];
 
 const nextConfig: NextConfig = {
