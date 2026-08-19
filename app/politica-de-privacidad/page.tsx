@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/politica-de-privacidad.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/politica-de-privacidad.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Política de privacidad",
   description: "SOCIOS PRO. Te detallamos nuestras políticas de privacidad asociadas y aplicadas en nuestro sitio web para cada usuario y sus datos",
   alternates: { canonical: "/politica-de-privacidad/" },
-  robots: {
+  robots: robotsMeta({
     index: false,
     follow: true,
     googleBot: { index: false, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Política de privacidad",
     description: "SOCIOS PRO. Te detallamos nuestras políticas de privacidad asociadas y aplicadas en nuestro sitio web para cada usuario y sus datos",

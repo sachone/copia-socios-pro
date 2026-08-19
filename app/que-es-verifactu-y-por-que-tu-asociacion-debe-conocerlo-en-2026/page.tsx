@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/que-es-verifactu-y-por-que-tu-asociacion-debe-conocerlo-en-2026.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/que-es-verifactu-y-por-que-tu-asociacion-debe-conocerlo-en-2026.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Qué es VeriFactu y por qué tu asociación debe conocerlo en 2026",
   description: "Si gestionas una asociación, una AMPA, un club deportivo o una ONG, es probable que hayas oído hablar de VeriFactu en los últimos meses",
   alternates: { canonical: "/que-es-verifactu-y-por-que-tu-asociacion-debe-conocerlo-en-2026/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Qué es VeriFactu y por qué tu asociación debe conocerlo en 2026",
     description: "Si gestionas una asociación, una AMPA, un club deportivo o una ONG, es probable que hayas oído hablar de VeriFactu en los últimos meses",

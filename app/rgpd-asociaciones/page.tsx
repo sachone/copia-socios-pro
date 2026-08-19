@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/rgpd-asociaciones.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/rgpd-asociaciones.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "RGPD en asociaciones: guía práctica para datos de socios",
   description: "Checklist y pasos para cumplir RGPD en asociaciones: información, bases legales, seguridad, derechos y gestión ordenada de datos de socios.",
   alternates: { canonical: "/rgpd-asociaciones/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "RGPD en asociaciones: guía práctica para datos de socios",
     description: "Checklist y pasos para cumplir RGPD en asociaciones: información, bases legales, seguridad, derechos y gestión ordenada de datos de socios.",

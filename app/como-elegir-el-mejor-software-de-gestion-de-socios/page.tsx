@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/como-elegir-el-mejor-software-de-gestion-de-socios.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/como-elegir-el-mejor-software-de-gestion-de-socios.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Cómo elegir el mejor software de gestión de socios",
   description: "En 2025, digitalizar la gestión de socios ya no es una moda, es una cuestión de supervivencia",
   alternates: { canonical: "/como-elegir-el-mejor-software-de-gestion-de-socios/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Cómo elegir el mejor software de gestión de socios",
     description: "En 2025, digitalizar la gestión de socios ya no es una moda, es una cuestión de supervivencia",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/cierre-contable-anual-de-una-asociacion-paso-a-paso.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/cierre-contable-anual-de-una-asociacion-paso-a-paso.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Cierre contable anual de una asociación paso a paso",
   description: "Descubre cómo hacer el cierre contable anual de una asociación paso a paso, cumplir con la normativa y presentar unas cuentas claras y transparentes a tus socios.",
   alternates: { canonical: "/cierre-contable-anual-de-una-asociacion-paso-a-paso/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Cierre contable anual de una asociación paso a paso",
     description: "Descubre cómo hacer el cierre contable anual de una asociación paso a paso, cumplir con la normativa y presentar unas cuentas claras y transparentes a tus socios.",

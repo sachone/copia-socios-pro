@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/blog.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/blog.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Blog",
   description: "Las últimas noticias en Socios.pro",
   alternates: { canonical: "/blog/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Blog",
     description: "Las últimas noticias en Socios.pro",

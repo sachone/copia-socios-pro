@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/socios-pro-fiscal.json";
 import "@/styles/shared/astra-5efbf537.css";
 import "@/styles/pages/socios-pro-fiscal.css";
@@ -10,11 +11,11 @@ const BODY_CLASS = "wp-singular page-template-default page page-id-947 wp-custom
 export const metadata: Metadata = {
   title: "PLAN FISCAL - Socios Pro",
   alternates: { canonical: "/socios-pro-fiscal/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "PLAN FISCAL - Socios Pro",
     description: "Socios.pro Fiscal Gestiona toda la contabilidad de tu asociación, así como los modelos de la AEAT, en una sola aplicación […]",

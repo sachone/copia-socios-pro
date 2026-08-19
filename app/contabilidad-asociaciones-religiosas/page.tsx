@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/contabilidad-asociaciones-religiosas.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/contabilidad-asociaciones-religiosas.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Software asociación religiosa. Programa contabilidad",
   description: "SOCIOS.PRO ⭐ Programa de gestión y contabilidad diseñado para asociaciones religiosas. Simplifica la gestión de tu comunidad religiosa",
   alternates: { canonical: "/contabilidad-asociaciones-religiosas/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Software asociación religiosa. Programa contabilidad",
     description: "SOCIOS.PRO ⭐ Programa de gestión y contabilidad diseñado para asociaciones religiosas. Simplifica la gestión de tu comunidad religiosa",

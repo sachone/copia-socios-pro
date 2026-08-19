@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/preparar-asociacion-auditoria-economica.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/preparar-asociacion-auditoria-economica.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Cómo preparar una asociación para una auditoría económica",
   description: "Descubre cómo preparar tu asociación para una auditoría económica con procesos, documentación y herramientas digitales.",
   alternates: { canonical: "/preparar-asociacion-auditoria-economica/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Cómo preparar una asociación para una auditoría económica",
     description: "Descubre cómo preparar tu asociación para una auditoría económica con procesos, documentación y herramientas digitales.",

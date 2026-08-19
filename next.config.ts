@@ -35,6 +35,7 @@ const csp = [
   "form-action 'self'",
   "img-src 'self' data:",
   "font-src 'self'",
+  "frame-src 'self'",
   "style-src 'self' 'unsafe-inline'",
   // En desarrollo, el recargado en caliente de Next.js usa eval() y un websocket.
   `script-src 'self' 'unsafe-inline'${isProd ? "" : " 'unsafe-eval'"}`,
@@ -52,6 +53,10 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   // El sitio no usa ninguna de estas capacidades: se renuncia a ellas explícitamente.
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
+  // Aisla la pestaña de cualquier ventana que la abriera: sin esto, quien
+  // abriera el sitio con window.open conserva una referencia con la que
+  // manipular la navegacion de esta pestaña.
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
   // Solo en producción: en local se sirve por http y el navegador la ignoraría.
   // Sin `preload`, que es un compromiso difícil de revertir y hay que solicitar aparte.
   ...(isProd

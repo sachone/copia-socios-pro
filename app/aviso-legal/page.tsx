@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/aviso-legal.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/aviso-legal.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Aviso legal",
   description: "SOCIOS PRO. Conoce detalle y como aplicamos la Ley Protección de Datos de Carácter Personal en nuestro sitio web",
   alternates: { canonical: "/aviso-legal/" },
-  robots: {
+  robots: robotsMeta({
     index: false,
     follow: true,
     googleBot: { index: false, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Aviso legal",
     description: "SOCIOS PRO. Conoce detalle y como aplicamos la Ley Protección de Datos de Carácter Personal en nuestro sitio web",

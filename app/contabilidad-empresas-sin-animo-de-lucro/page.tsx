@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/contabilidad-empresas-sin-animo-de-lucro.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/contabilidad-empresas-sin-animo-de-lucro.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Software entidades sin ánimo de lucro. Contabilidad empresas",
   description: "SOCIOS.PRO ⭐ Programa de gestión para entidades sin ánimo de lucro. Controla tu empresa con nuestra plataforma eficaz",
   alternates: { canonical: "/contabilidad-empresas-sin-animo-de-lucro/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Software entidades sin ánimo de lucro. Contabilidad empresas",
     description: "SOCIOS.PRO ⭐ Programa de gestión para entidades sin ánimo de lucro. Controla tu empresa con nuestra plataforma eficaz",

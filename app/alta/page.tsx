@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/alta.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/alta.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Registro en nuestro herramienta",
   description: "SOCIOS.PRO ⭐ ¡Regístrate ahora! Simplifica la gestión contable de tu asociación con nuestra herramienta profesional y accesible",
   alternates: { canonical: "/alta/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Registro en nuestro herramienta",
     description: "SOCIOS.PRO ⭐ ¡Regístrate ahora! Simplifica la gestión contable de tu asociación con nuestra herramienta profesional y accesible",

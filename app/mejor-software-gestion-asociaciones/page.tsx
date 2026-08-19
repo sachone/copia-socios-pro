@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/mejor-software-gestion-asociaciones.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/mejor-software-gestion-asociaciones.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Cómo elegir el mejor software de gestión para asociaciones",
   description: "Descubre cómo elegir el mejor software de gestión para tu asociación y evita los errores más comunes al digitalizar tu entidad.",
   alternates: { canonical: "/mejor-software-gestion-asociaciones/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Cómo elegir el mejor software de gestión para asociaciones",
     description: "Descubre cómo elegir el mejor software de gestión para tu asociación y evita los errores más comunes al digitalizar tu entidad.",

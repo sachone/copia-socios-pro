@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/alta-socios-asociacion.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/alta-socios-asociacion.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Alta de socios en una asociación: proceso sencillo y efectivo",
   description: "Aprende a crear un proceso de alta de socios claro y rápido: formulario, automatización, cuotas y buenas prácticas para asociaciones.",
   alternates: { canonical: "/alta-socios-asociacion/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Alta de socios en una asociación: proceso sencillo y efectivo",
     description: "Aprende a crear un proceso de alta de socios claro y rápido: formulario, automatización, cuotas y buenas prácticas para asociaciones.",

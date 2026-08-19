@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/modelos-aeat-para-asociaciones-guia-practica.json";
 import "@/styles/shared/astra-4e03e7e2.css";
 import "@/styles/pages/modelos-aeat-para-asociaciones-guia-practica.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Modelos AEAT para asociaciones: guía práctica",
   description: "Esta guía te ayudará a entender, sin tecnicismos innecesarios, qué modelos debe presentar tu asociación.",
   alternates: { canonical: "/modelos-aeat-para-asociaciones-guia-practica/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Modelos AEAT para asociaciones: guía práctica",
     description: "Esta guía te ayudará a entender, sin tecnicismos innecesarios, qué modelos debe presentar tu asociación.",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/como-gestionar-el-portal-del-socio-guia-socios-hagan-gestiones-solos.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/como-gestionar-el-portal-del-socio-guia-socios-hagan-gestiones-solos.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Cómo gestionar el portal del socio: guía para tus socios",
   description: "En esta guía te explicamos qué es el portal del socio, qué puede hacer este desde su propio acceso y que ventajas tiene.",
   alternates: { canonical: "/como-gestionar-el-portal-del-socio-guia-socios-hagan-gestiones-solos/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Cómo gestionar el portal del socio: guía para tus socios",
     description: "En esta guía te explicamos qué es el portal del socio, qué puede hacer este desde su propio acceso y que ventajas tiene.",

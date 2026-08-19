@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/contacto.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/contacto.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Contáctanos ya para resolver tus dudas o pedir presupuesto",
   description: "SOCIOS.PRO ⭐ ¡Contáctanos ahora! Resuelve dudas o solicita presupuesto para gestionar la contabilidad de tu asociación",
   alternates: { canonical: "/contacto/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Contáctanos ya para resolver tus dudas o pedir presupuesto",
     description: "SOCIOS.PRO ⭐ ¡Contáctanos ahora! Resuelve dudas o solicita presupuesto para gestionar la contabilidad de tu asociación",

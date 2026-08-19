@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/programa-gestion-asociaciones.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/programa-gestion-asociaciones.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Software gestión asociaciones",
   description: "SOCIOS.PRO ⭐ El mejor software de gestión para asociaciones. Centraliza contabilidad, socios y actividades en una sola plataforma",
   alternates: { canonical: "/programa-gestion-asociaciones/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Software gestión asociaciones",
     description: "SOCIOS.PRO ⭐ El mejor software de gestión para asociaciones. Centraliza contabilidad, socios y actividades en una sola plataforma",

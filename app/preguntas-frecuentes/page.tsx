@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/preguntas-frecuentes.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/preguntas-frecuentes.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Preguntas frecuentes sobre el programa de contabilidad",
   description: "SOCIOS.PRO ⭐ Preguntas habituales y sus respuestas sobre nuestra herramienta de contabilidad para asociaciones sin ánimo de lucro",
   alternates: { canonical: "/preguntas-frecuentes/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Preguntas frecuentes sobre el programa de contabilidad",
     description: "SOCIOS.PRO ⭐ Preguntas habituales y sus respuestas sobre nuestra herramienta de contabilidad para asociaciones sin ánimo de lucro",

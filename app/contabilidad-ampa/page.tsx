@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/contabilidad-ampa.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/contabilidad-ampa.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Software gestión AMPA. Programa contabilidad AMPA",
   description: "SOCIOS.PRO ⭐ Software AMPA. Herramienta de contabilidad para AMPA. Facilita la gestión de la asociación de padres y madres",
   alternates: { canonical: "/contabilidad-ampa/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Software gestión AMPA. Programa contabilidad AMPA",
     description: "SOCIOS.PRO ⭐ Software AMPA. Herramienta de contabilidad para AMPA. Facilita la gestión de la asociación de padres y madres",

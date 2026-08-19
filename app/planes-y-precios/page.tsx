@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/planes-y-precios.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/planes-y-precios.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Planes y precios",
   description: "Gestiona tu asociación! Socios.pro Gestión 19,95 €/mes La solución profesional esencial para tu asociación. Gestión integral de socios Facturas de",
   alternates: { canonical: "/planes-y-precios/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Planes y precios",
     description: "Gestiona tu asociación! Socios.pro Gestión 19,95 €/mes La solución profesional esencial para tu asociación. Gestión integral de socios Facturas de",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/digitalizar-gestion-socios-cuotas-asociaciones.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/digitalizar-gestion-socios-cuotas-asociaciones.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Digitalizar la gestión de socios y cuotas en 2026",
   description: "Digitalizar la gestión de socios y cuotas es el paso natural para cualquier asociación que ha crecido",
   alternates: { canonical: "/digitalizar-gestion-socios-cuotas-asociaciones/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Digitalizar la gestión de socios y cuotas en 2026",
     description: "Digitalizar la gestión de socios y cuotas es el paso natural para cualquier asociación que ha crecido",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/que-es.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/que-es.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "¿Qué es Socios.Pro?",
   description: "SOCIOS.PRO ⭐ ¿Qué es Socios.Pro? Una plataforma para gestionar contabilidad y facturación en asociaciones sin ánimo de lucro",
   alternates: { canonical: "/que-es/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "¿Qué es Socios.Pro?",
     description: "SOCIOS.PRO ⭐ ¿Qué es Socios.Pro? Una plataforma para gestionar contabilidad y facturación en asociaciones sin ánimo de lucro",

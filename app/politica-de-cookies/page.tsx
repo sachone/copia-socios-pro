@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/politica-de-cookies.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/politica-de-cookies.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Política de cookies",
   description: "SOCIOS PRO. Consulta nuestra política de cookies para nuestros usuarios cuando acceden a nuestra web y como tratamos su datos personales",
   alternates: { canonical: "/politica-de-cookies/" },
-  robots: {
+  robots: robotsMeta({
     index: false,
     follow: true,
     googleBot: { index: false, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Política de cookies",
     description: "SOCIOS PRO. Consulta nuestra política de cookies para nuestros usuarios cuando acceden a nuestra web y como tratamos su datos personales",

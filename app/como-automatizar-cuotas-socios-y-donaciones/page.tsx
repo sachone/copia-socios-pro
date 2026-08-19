@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/como-automatizar-cuotas-socios-y-donaciones.json";
 import "@/styles/shared/astra-bfdddc8d.css";
 import "@/styles/pages/como-automatizar-cuotas-socios-y-donaciones.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Cómo automatizar las cuotas de socios y donaciones sin morir en el intento",
   description: "Automatiza las cuotas de socios y donaciones de tu asociación para reducir la morosidad, ahorrar tiempo al tesorero y mantener una contabilidad siempre al día.",
   alternates: { canonical: "/como-automatizar-cuotas-socios-y-donaciones/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Cómo automatizar las cuotas de socios y donaciones sin morir en el intento",
     description: "Automatiza las cuotas de socios y donaciones de tu asociación para reducir la morosidad, ahorrar tiempo al tesorero y mantener una contabilidad siempre al día.",

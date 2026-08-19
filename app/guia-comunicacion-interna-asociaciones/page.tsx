@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/guia-comunicacion-interna-asociaciones.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/guia-comunicacion-interna-asociaciones.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Comunicación interna para asociaciones: guía práctica",
   description: "Aprende a organizar la comunicación interna de tu asociación con un portal del socio, avisos automatizados y menos trabajo manual.",
   alternates: { canonical: "/guia-comunicacion-interna-asociaciones/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Comunicación interna para asociaciones: guía práctica",
     description: "Aprende a organizar la comunicación interna de tu asociación con un portal del socio, avisos automatizados y menos trabajo manual.",

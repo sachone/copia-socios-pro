@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/contabilidad-asociaciones-festeras.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/contabilidad-asociaciones-festeras.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Software asociación festera. Programa de contabilidad",
   description: "SOCIOS.PRO ⭐ Software de gestión y contabilidad para asociaciones festeras. Gestiona gastos, cuotas y eventos con eficacia y conforme a la normativa",
   alternates: { canonical: "/contabilidad-asociaciones-festeras/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Software asociación festera. Programa de contabilidad",
     description: "SOCIOS.PRO ⭐ Software de gestión y contabilidad para asociaciones festeras. Gestiona gastos, cuotas y eventos con eficacia y conforme a la normativa",

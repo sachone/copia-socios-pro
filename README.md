@@ -229,8 +229,16 @@ obliga a renderizar cada página en cada petición — justo lo que este clon
 evita. Aun con ella, la cabecera sigue bloqueando lo importante: cargar script
 de un dominio ajeno, `<object>`/`<embed>`, mover el `<base>`, mandar
 formularios fuera y que nos metan en un iframe. Las acompañan
-`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`,
-`Permissions-Policy` y, solo en producción, `Strict-Transport-Security`.
+`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` (que se mantiene
+junto a `frame-ancestors` para los navegadores sin CSP nivel 2),
+`Permissions-Policy`, `Cross-Origin-Opener-Policy` y, solo en producción,
+`Strict-Transport-Security` —declarada aquí aunque Vercel ya la mande, para que
+la protección no dependa del proveedor—.
+
+Lo que sobrevive a las dos concesiones de `'unsafe-inline'`, que es lo que
+importa: la CSP sigue bloqueando lo que convierte un XSS en un problema serio,
+que es traerse un script del dominio del atacante o mandarle datos
+(`connect-src 'self'`).
 
 **Nada se carga de terceros.** El original cargaba dos cosas de fuera en
 `/planes-y-precios/`, y ninguna sigue ahí:
@@ -247,9 +255,28 @@ formularios fuera y que nos metan en un iframe. Las acompañan
 Ambas cosas las hace `tools/generar.py`, así que sobreviven a las
 regeneraciones.
 
+**Ninguna credencial heredada del original.** El widget de reCAPTCHA quedaba
+como un nodo vacío —su JS no se carga— pero arrastraba en el marcado la clave
+de sitio de socios.pro, en 4 páginas. Esa clave es de su dueña y está atada a su
+dominio: republicarla aquí no aporta nada. `tools/generar.py` la elimina con el
+campo entero (`remove_balanced_div()`, que cuenta anidamientos en vez de cortar
+en el primer `</div>`: un cierre suelto habría cerrado antes de tiempo el
+`<form>` y dejado el botón de enviar fuera, sin que se notara al mirar).
+
 **Scripts en línea.** Tanto las clases de `<body>` como el JSON-LD escapan el
 `<` a `\u003c` antes de incrustarse: `JSON.stringify()` no neutraliza un
 `</script>`, y ese texto viene del volcado del original.
+
+**Las tipografías no tienen problema de licencia.** Poppins, Roboto, Roboto Slab
+e Inter son todas de Google Fonts, bajo Open Font License: copiar los ficheros y
+servirlos desde este dominio está permitido. Si en el futuro se trajera una
+tipografía de Adobe Fonts o similar, ahí sí habría que contratar el dominio de
+despliegue aparte, porque esas licencias van por dominio.
+
+**`vercel.json` fija el framework.** Si Vercel no detectara Next.js, publicaría
+`public/` como sitio estático: las rutas darían 404, las imágenes 200 y ninguna
+de estas cabeceras existiría. Que una cabecera propia aparezca en la respuesta
+es la prueba de que el despliegue compiló la aplicación de verdad.
 
 **Al regenerar, mira el diff.** `tools/generar.py` mete en las 50 páginas el
 HTML y el JS del original tal cual. Si socios.pro estuviera comprometido el
@@ -258,17 +285,35 @@ día que lo ejecutas, eso entra en el clon sin que nada lo detecte. Revisa el
 
 ## Fuera de los buscadores (temporal)
 
-Mientras el sitio no esté terminado, todas las respuestas llevan la cabecera
-`X-Robots-Tag: noindex, nofollow`. **Para publicarlo, pon `PERMITIR_INDEXACION`
-a `true` en `lib/indexacion.ts` y despliega**: es lo único que hay que tocar.
+La URL de vista previa es pública, rastreable y una copia casi idéntica de un
+sitio que sigue vivo: indexada, competiría con el original por sus propias
+palabras clave. Mientras no esté terminado, el sitio se sirve con tres
+barreras, porque cada una cubre lo que a las otras se les escapa:
 
-Va por cabecera y no por `<meta name="robots">` porque las 50 páginas traen su
-propio bloque `robots` en el `metadata`, generado desde el original, y una
-etiqueta puesta en el layout quedaría pisada por la de cada página. Tampoco se
-usa `Disallow: /` en robots.txt: eso impide *rastrear*, que no es lo mismo que
-impedir *indexar* — un buscador que no puede entrar tampoco puede leer el
-`noindex`, así que una URL ya conocida podría seguir saliendo en los
-resultados. Se deja el rastreo abierto y se bloquea la indexación.
+| Barrera | Qué cubre | Dónde |
+|---|---|---|
+| `<meta name="robots" content="noindex, nofollow">` | Cada página HTML | `robotsMeta()`, aplicado por `tools/generar.py` a las 50 páginas |
+| Cabecera `X-Robots-Tag` | Lo que no es HTML: `sitemap.xml`, imágenes, PDFs | `next.config.ts` |
+| `Disallow: /` sin línea `Sitemap:` | Corta el rastreo de entrada | `app/robots.ts` |
+
+**Para publicarlo, define `SITIO_INDEXABLE=true` en Vercel y vuelve a
+desplegar.** No hay que tocar código, y cada página recupera sus valores
+originales: `/que-es/` vuelve a `index, follow` y `/aviso-legal/` conserva el
+`noindex` que ya traía del original. Está **cerrado por defecto** a propósito,
+para que desplegar sin configurar nada sea el estado seguro. Ojo: el `<meta>`
+se calcula al compilar, así que cambiar la variable exige un despliegue nuevo.
+
+Va por `<meta>` *y* por cabecera porque las 50 páginas traen su propio bloque
+`robots` generado desde el original, que pisaría cualquier etiqueta puesta en
+el layout; por eso lo aplica el generador página a página.
+
+Un matiz sobre el `Disallow`, por si algún día hay que revisarlo: impide
+*rastrear*, que no es lo mismo que impedir *indexar*. Un buscador que no entra
+tampoco lee el `noindex`, así que una URL que ya conociera por un enlace
+externo podría seguir saliendo en resultados, sin descripción. Para una URL de
+vista previa recién creada y sin enlaces entrantes compensa —corta el rastreo
+antes de que empiece—, pero si este sitio llegara a estar ya indexado, lo
+correcto sería quitar el `Disallow` y dejar que rastreen y lean el `noindex`.
 
 ## Lo que no se ha replicado
 

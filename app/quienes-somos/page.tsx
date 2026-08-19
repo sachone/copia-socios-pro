@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/quienes-somos.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/quienes-somos.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "¿Quiénes somos?",
   description: "SOCIOS.PRO ⭐ Conoce al equipo detrás de Socios.Pro. Expertos en contabilidad para asociaciones y entidades sin ánimo de lucro",
   alternates: { canonical: "/quienes-somos/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "¿Quiénes somos?",
     description: "SOCIOS.PRO ⭐ Conoce al equipo detrás de Socios.Pro. Expertos en contabilidad para asociaciones y entidades sin ánimo de lucro",

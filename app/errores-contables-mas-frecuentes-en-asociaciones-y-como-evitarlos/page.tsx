@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/errores-contables-mas-frecuentes-en-asociaciones-y-como-evitarlos.json";
 import "@/styles/shared/astra-bfdddc8d.css";
 import "@/styles/pages/errores-contables-mas-frecuentes-en-asociaciones-y-como-evitarlos.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Errores contables más frecuentes en asociaciones (y cómo evitarlos)",
   description: "Evita los errores contables más frecuentes en asociaciones pequeñas. Descubre sus consecuencias y cómo corregirlos con una gestión económica más profesional.",
   alternates: { canonical: "/errores-contables-mas-frecuentes-en-asociaciones-y-como-evitarlos/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Errores contables más frecuentes en asociaciones (y cómo evitarlos)",
     description: "Evita los errores contables más frecuentes en asociaciones pequeñas. Descubre sus consecuencias y cómo corregirlos con una gestión económica más profesional.",

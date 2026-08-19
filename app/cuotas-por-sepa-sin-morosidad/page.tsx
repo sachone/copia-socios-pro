@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/cuotas-por-sepa-sin-morosidad.json";
 import "@/styles/shared/astra-bfdddc8d.css";
 import "@/styles/pages/cuotas-por-sepa-sin-morosidad.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Cuotas por SEPA sin morosidad",
   description: "Gestionar las cuotas de socio es una de esas tareas que parecen sencillas…hasta que llegan los primeros impagos",
   alternates: { canonical: "/cuotas-por-sepa-sin-morosidad/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Cuotas por SEPA sin morosidad",
     description: "Gestionar las cuotas de socio es una de esas tareas que parecen sencillas…hasta que llegan los primeros impagos",

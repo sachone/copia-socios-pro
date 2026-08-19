@@ -130,6 +130,31 @@ def strip_nested_document(html):
     return re.sub(r'<meta\s+(?:charset|name="viewport")[^>]*>', "", html)
 
 
+def remove_balanced_div(html, marca):
+    """Elimina el <div> que contiene `marca` junto con todo su contenido,
+    contando anidamientos.
+
+    Un `<div[^>]*>.*?</div>` perezoso cortaria en el primer </div>, dejando
+    sueltos los cierres de los divs internos: el navegador repara ese
+    desbalance en silencio, asi que la pagina sigue viendose bien mientras el
+    DOM real no es el que se escribio (y un cierre de mas puede cerrar antes
+    de tiempo el <form> que lo envuelve, dejando el boton de enviar fuera).
+    """
+    while True:
+        m = re.search(r"<div\b[^>]*%s[^>]*>" % re.escape(marca), html)
+        if not m:
+            return html
+        i, profundidad = m.end(), 1
+        for t in re.finditer(r"<div\b|</div>", html[m.end():]):
+            profundidad += 1 if t.group(0) != "</div>" else -1
+            if profundidad == 0:
+                i = m.end() + t.end()
+                break
+        else:
+            return html  # sin cierre: no se toca, mejor dejarlo que romperlo
+        html = html[:m.start()] + html[i:]
+
+
 def clean(html):
     html = RE_SCRIPT.sub("", html)
     html = RE_NOSCRIPT.sub("", html)
@@ -141,6 +166,11 @@ def clean(html):
     html = localize_images(html)
     # El banner de cookies (Complianz) depende de su propio JS: se elimina.
     html = re.sub(r'<div id="cmplz-cookiebanner-container">.*', "", html, flags=re.S)
+    # El widget de reCAPTCHA se queda en un nodo vacio -su JS no se carga, ver
+    # README- pero arrastraba en el marcado la clave de sitio de socios.pro.
+    # Esa clave es de su duena y esta atada a su dominio: no pinta nada
+    # republicada aqui, asi que se quita el campo entero del formulario.
+    html = remove_balanced_div(html, "elementor-field-type-recaptcha")
     # El patron del campo telefono es una regex invalida en el modo "v" de
     # los navegadores modernos (error en consola en cada envio, aunque no
     # llega a bloquear el formulario). Es un fallo del propio original que no
@@ -192,13 +222,16 @@ def metadata_block(meta, route):
     if meta["robots"]:
         index = "noindex" not in meta["robots"]
         follow = "nofollow" not in meta["robots"]
+        # Envuelto en robotsMeta(): mientras el sitio no sea publico devuelve
+        # noindex, y al abrirlo cada pagina recupera estos valores sin
+        # regenerar nada (ver lib/indexacion.ts).
         out += [
-            "  robots: {",
+            "  robots: robotsMeta({",
             "    index: %s," % str(index).lower(),
             "    follow: %s," % str(follow).lower(),
             "    googleBot: { index: %s, follow: %s, \"max-image-preview\": \"large\", "
             "\"max-snippet\": -1, \"max-video-preview\": -1 }," % (str(index).lower(), str(follow).lower()),
-            "  },",
+            "  }),",
         ]
 
     if og:
@@ -583,6 +616,7 @@ def add_submenu_arrows(header):
 
 PAGE_TEMPLATE = '''import type {{ Metadata }} from "next";
 import PageBody from "@/components/PageBody";
+import {{ robotsMeta }} from "@/lib/indexacion";
 import content from "@/content/pages/{key}.json";
 {astra_import}import "@/styles/pages/{key}.css";
 

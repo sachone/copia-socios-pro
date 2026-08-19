@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/contabilidad-asociaciones-falleras.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/contabilidad-asociaciones-falleras.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Software asociación fallera. Programa de contabilidad",
   description: "SOCIOS.PRO ⭐ Software de gestión de asociación fallera. Optimiza la gestión económica de tu falla con una herramienta clara y legal",
   alternates: { canonical: "/contabilidad-asociaciones-falleras/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Software asociación fallera. Programa de contabilidad",
     description: "SOCIOS.PRO ⭐ Software de gestión de asociación fallera. Optimiza la gestión económica de tu falla con una herramienta clara y legal",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/diferencias-contabilidad-empresa-entidad-sin-animo-de-lucro.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/diferencias-contabilidad-empresa-entidad-sin-animo-de-lucro.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Diferencias entre la contabilidad de una empresa y de una entidad sin ánimo de lucro",
   description: "La contabilidad de una empresa no es igual que la de una entidad sin ánimo de lucro. Descubre las principales diferencias y cómo gestionarlas correctamente.",
   alternates: { canonical: "/diferencias-contabilidad-empresa-entidad-sin-animo-de-lucro/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Diferencias entre la contabilidad de una empresa y de una entidad sin ánimo de lucro",
     description: "La contabilidad de una empresa no es igual que la de una entidad sin ánimo de lucro. Descubre las principales diferencias y cómo gestionarlas correctamente.",

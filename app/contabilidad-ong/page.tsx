@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/contabilidad-ong.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/contabilidad-ong.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Programa gestión ONG. Programa contabilidad ONG",
   description: "SOCIOS.PRO ⭐ Software ONG de gestión y contabilidad. Gestiona de forma sencilla una Organización no Gubernamental optimizando recursos y tiempo",
   alternates: { canonical: "/contabilidad-ong/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Programa gestión ONG. Programa contabilidad ONG",
     description: "SOCIOS.PRO ⭐ Software ONG de gestión y contabilidad. Gestiona de forma sencilla una Organización no Gubernamental optimizando recursos y tiempo",

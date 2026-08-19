@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/calendario-fiscal-anual-para-asociaciones-sin-animo-de-lucro.json";
 import "@/styles/shared/astra-bfdddc8d.css";
 import "@/styles/pages/calendario-fiscal-anual-para-asociaciones-sin-animo-de-lucro.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Calendario fiscal anual para asociaciones sin ánimo de lucro",
   description: "Presentamos un calendario fiscal anual pensado para asociaciones sin ánimo de lucro, para que la junta directiva lo tenga claro",
   alternates: { canonical: "/calendario-fiscal-anual-para-asociaciones-sin-animo-de-lucro/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Calendario fiscal anual para asociaciones sin ánimo de lucro",
     description: "Presentamos un calendario fiscal anual pensado para asociaciones sin ánimo de lucro, para que la junta directiva lo tenga claro",

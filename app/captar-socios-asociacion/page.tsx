@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/captar-socios-asociacion.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/captar-socios-asociacion.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Cómo captar socios para una asociación: estrategias efectivas",
   description: "Descubre cómo captar socios para una asociación con estrategias digitales, visibilidad online y gestión eficiente de miembros paso a paso.",
   alternates: { canonical: "/captar-socios-asociacion/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Cómo captar socios para una asociación: estrategias efectivas",
     description: "Descubre cómo captar socios para una asociación con estrategias digitales, visibilidad online y gestión eficiente de miembros paso a paso.",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/como-preparar-la-contabilidad-de-tu-ong-para-pedir-subvenciones.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/como-preparar-la-contabilidad-de-tu-ong-para-pedir-subvenciones.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Cómo preparar la contabilidad de tu ONG para pedir subvenciones",
   description: "Aprende cómo preparar la contabilidad de tu ONG para solicitar y justificar subvenciones con éxito, evitando errores y mejorando la transparencia económica.",
   alternates: { canonical: "/como-preparar-la-contabilidad-de-tu-ong-para-pedir-subvenciones/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Cómo preparar la contabilidad de tu ONG para pedir subvenciones",
     description: "Aprende cómo preparar la contabilidad de tu ONG para solicitar y justificar subvenciones con éxito, evitando errores y mejorando la transparencia económica.",

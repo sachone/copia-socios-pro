@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/como-funciona.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/como-funciona.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "¿Cómo funciona nuestro programa de contabilidad?",
   description: "SOCIOS.PRO ⭐ Aprende cómo funciona nuestro programa de contabilidad para asociaciones. Simplifica tus cuentas en pocos pasos",
   alternates: { canonical: "/como-funciona/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "¿Cómo funciona nuestro programa de contabilidad?",
     description: "SOCIOS.PRO ⭐ Aprende cómo funciona nuestro programa de contabilidad para asociaciones. Simplifica tus cuentas en pocos pasos",

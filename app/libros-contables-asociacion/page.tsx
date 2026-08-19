@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/libros-contables-asociacion.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/libros-contables-asociacion.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Libros contables asociaciones sin fines de lucro",
   description: "SOCIOS.PRO ⭐ Gestión de libros contables para asociaciones sin ánimo de lucro. Organiza tus registros financieros de forma eficiente",
   alternates: { canonical: "/libros-contables-asociacion/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Libros contables asociaciones sin fines de lucro",
     description: "SOCIOS.PRO ⭐ Gestión de libros contables para asociaciones sin ánimo de lucro. Organiza tus registros financieros de forma eficiente",

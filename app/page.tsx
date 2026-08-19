@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/index.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/index.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Software gestión asociaciones. Programa de contabilidad",
   description: "SOCIOS.PRO ⭐ Programa de gestión y contabilidad diseñado para asociaciones sin fines de lucro. Gestión fácil y profesional de tu asociación",
   alternates: { canonical: "/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Software gestión asociaciones. Programa de contabilidad",
     description: "SOCIOS.PRO ⭐ Programa de gestión y contabilidad diseñado para asociaciones sin fines de lucro. Gestión fácil y profesional de tu asociación",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/contabilidad-bandas-musica.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/contabilidad-bandas-musica.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Software gestión banda de música. Programa de contabilidad",
   description: "SOCIOS.PRO ⭐ Programa de gestión y contabilidad para bandas de música. Controla ingresos, salidas y subvenciones con transparencia y facilidad",
   alternates: { canonical: "/contabilidad-bandas-musica/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Software gestión banda de música. Programa de contabilidad",
     description: "SOCIOS.PRO ⭐ Programa de gestión y contabilidad para bandas de música. Controla ingresos, salidas y subvenciones con transparencia y facilidad",

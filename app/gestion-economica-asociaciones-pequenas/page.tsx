@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/gestion-economica-asociaciones-pequenas.json";
 import "@/styles/shared/astra-a15e2161.css";
 import "@/styles/pages/gestion-economica-asociaciones-pequenas.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Gestión económica para asociaciones | Profesionalízala fácil",
   description: "Descubre cómo profesionalizar la gestión económica de tu asociación sin crear un departamento financiero con Socios.pro.",
   alternates: { canonical: "/gestion-economica-asociaciones-pequenas/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Gestión económica para asociaciones | Profesionalízala fácil",
     description: "Descubre cómo profesionalizar la gestión económica de tu asociación sin crear un departamento financiero con Socios.pro.",

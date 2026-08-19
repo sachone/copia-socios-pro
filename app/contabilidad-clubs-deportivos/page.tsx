@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/contabilidad-clubs-deportivos.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/contabilidad-clubs-deportivos.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Software club deportivo. Programa contabilidad club deportivo",
   description: "SOCIOS.PRO ⭐ Software de gestión para club deportivo. Organiza tu club con soluciones fáciles y seguras",
   alternates: { canonical: "/contabilidad-clubs-deportivos/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Software club deportivo. Programa contabilidad club deportivo",
     description: "SOCIOS.PRO ⭐ Software de gestión para club deportivo. Organiza tu club con soluciones fáciles y seguras",

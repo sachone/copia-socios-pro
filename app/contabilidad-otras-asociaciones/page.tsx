@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/contabilidad-otras-asociaciones.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/contabilidad-otras-asociaciones.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Software para asociaciones culturales, festivas y más",
   description: "SOCIOS.PRO ⭐ Programa de gestión y contabilidad para asociaciones de cualquier tipo: culturales, festivas, de animales, tradicionales…",
   alternates: { canonical: "/contabilidad-otras-asociaciones/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Software para asociaciones culturales, festivas y más",
     description: "SOCIOS.PRO ⭐ Programa de gestión y contabilidad para asociaciones de cualquier tipo: culturales, festivas, de animales, tradicionales…",

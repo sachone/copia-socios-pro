@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/contabilidad-fundaciones.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/contabilidad-fundaciones.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Software fundaciones. Contabilidad fundación sin ánimo de lucro",
   description: "SOCIOS.PRO ⭐ Programa de gestión y contabilidad para fundaciones sin ánimo de lucro. Gestión eficiente y cumplimiento con la normativa vigente",
   alternates: { canonical: "/contabilidad-fundaciones/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Software fundaciones. Contabilidad fundación sin ánimo de lucro",
     description: "SOCIOS.PRO ⭐ Programa de gestión y contabilidad para fundaciones sin ánimo de lucro. Gestión eficiente y cumplimiento con la normativa vigente",

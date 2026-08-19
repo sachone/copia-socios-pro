@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/obligaciones-contables-minimas-de-una-asociacion-pequena.json";
 import "@/styles/shared/astra-bfdddc8d.css";
 import "@/styles/pages/obligaciones-contables-minimas-de-una-asociacion-pequena.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Obligaciones contables mínimas de una asociación pequeña",
   description: "Descubre las obligaciones contables mínimas de una asociación pequeña y cómo llevar libros y registros al día de forma sencilla y sin errores.",
   alternates: { canonical: "/obligaciones-contables-minimas-de-una-asociacion-pequena/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Obligaciones contables mínimas de una asociación pequeña",
     description: "Descubre las obligaciones contables mínimas de una asociación pequeña y cómo llevar libros y registros al día de forma sencilla y sin errores.",

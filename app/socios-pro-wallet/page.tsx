@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/socios-pro-wallet.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/socios-pro-wallet.css";
@@ -10,11 +11,11 @@ const BODY_CLASS = "wp-singular page-template-default page page-id-831 wp-custom
 export const metadata: Metadata = {
   title: "Socios pro Wallet - Socios Pro",
   alternates: { canonical: "/socios-pro-wallet/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Socios pro Wallet - Socios Pro",
     description: "Socios.pro Wallet Revolucionad vuestros eventos y barra con tecnología NFC y TPV Solicita una DEMO gratuita ahora! Lleva tu asociación […]",

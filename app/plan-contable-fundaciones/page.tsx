@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/plan-contable-fundaciones.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/plan-contable-fundaciones.css";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
   title: "Plan contabilidad asociaciones sin ánimo de lucro",
   description: "SOCIOS.PRO ⭐ Plan de contabilidad adaptado a asociaciones sin ánimo de lucro. Gestiona tus finanzas con claridad y cumplimiento legal",
   alternates: { canonical: "/plan-contable-fundaciones/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Plan contabilidad asociaciones sin ánimo de lucro",
     description: "SOCIOS.PRO ⭐ Plan de contabilidad adaptado a asociaciones sin ánimo de lucro. Gestiona tus finanzas con claridad y cumplimiento legal",

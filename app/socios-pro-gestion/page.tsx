@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageBody from "@/components/PageBody";
+import { robotsMeta } from "@/lib/indexacion";
 import content from "@/content/pages/socios-pro-gestion.json";
 import "@/styles/shared/astra-b0e46906.css";
 import "@/styles/pages/socios-pro-gestion.css";
@@ -10,11 +11,11 @@ const BODY_CLASS = "wp-singular page-template-default page page-id-830 wp-custom
 export const metadata: Metadata = {
   title: "Socios pro Gestión - Socios Pro",
   alternates: { canonical: "/socios-pro-gestion/" },
-  robots: {
+  robots: robotsMeta({
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
+  }),
   openGraph: {
     title: "Socios pro Gestión - Socios Pro",
     description: "Socios.pro Gestión Toma el control total de tu asociación y olvídate del caos administrativo Solicita una DEMO gratuita ahora! Deja […]",
