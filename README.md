@@ -30,6 +30,7 @@ npm run build && npm start
 | `components/CookieConsent.tsx` | Banner de consentimiento de cookies (RGPD) |
 | `lib/consent.ts` | Estado de consentimiento: `useConsent()` / `hasConsent()` para gatear scripts futuros |
 | `lib/rate-limit.ts` | Límite de tasa en memoria que protege `/api/contact` |
+| `lib/indexacion.ts` | Interruptor para dejar el sitio fuera de los buscadores mientras se termina |
 | `lib/site-url.ts` | Resuelve el dominio real del despliegue (para metadatos y JSON-LD) |
 | `tools/` | Los scripts que descargan el original y regeneran todo lo anterior |
 
@@ -38,7 +39,8 @@ Todo lo que hay en `app/*/page.tsx` (excepto `app/api/`), `content/`, `styles/sh
 `vendor/`), `lib/routes.json`,
 `lib/preload-fonts.json` y `lib/favicons.json` **está generado**: no lo edites a mano, se
 sobrescribe. Lo escrito a mano es `app/layout.tsx`, `app/api/`, `components/`,
-`lib/consent.ts`, `lib/rate-limit.ts`, `lib/site-url.ts`, `styles/site-overrides.css`
+`lib/consent.ts`, `lib/rate-limit.ts`, `lib/indexacion.ts`, `lib/site-url.ts`,
+`styles/site-overrides.css`
 y `tools/`.
 
 ## Regenerar desde el original
@@ -73,6 +75,11 @@ SmartMenus y el bundle de Elementor (~500 KB), `components/ElementorRuntime.tsx`
 y `components/Header.tsx` reimplementan lo poco que hace falta:
 
 - menú hamburguesa y submenús desplegables (`Header.tsx`);
+- el estirado del menú móvil a todo el ancho de la ventana, que en el
+  original hace el JS de Elementor por la clase `elementor-nav-menu--stretch`
+  (`stretchDropdown()` en `Header.tsx`): sin él, el desplegable toma como
+  referencia el botón de la hamburguesa —36 px, pegado al borde derecho— y se
+  sale de la pantalla;
 - animaciones de entrada `fadeInDown` / `fadeInRight` al entrar en pantalla;
 - proporción fija de las miniaturas del widget de entradas;
 - clases de `<body>` propias de cada página.
@@ -248,6 +255,20 @@ regeneraciones.
 HTML y el JS del original tal cual. Si socios.pro estuviera comprometido el
 día que lo ejecutas, eso entra en el clon sin que nada lo detecte. Revisa el
 `git diff` de `content/`, `public/widgets/` y `styles/` antes de commitear.
+
+## Fuera de los buscadores (temporal)
+
+Mientras el sitio no esté terminado, todas las respuestas llevan la cabecera
+`X-Robots-Tag: noindex, nofollow`. **Para publicarlo, pon `PERMITIR_INDEXACION`
+a `true` en `lib/indexacion.ts` y despliega**: es lo único que hay que tocar.
+
+Va por cabecera y no por `<meta name="robots">` porque las 50 páginas traen su
+propio bloque `robots` en el `metadata`, generado desde el original, y una
+etiqueta puesta en el layout quedaría pisada por la de cada página. Tampoco se
+usa `Disallow: /` en robots.txt: eso impide *rastrear*, que no es lo mismo que
+impedir *indexar* — un buscador que no puede entrar tampoco puede leer el
+`noindex`, así que una URL ya conocida podría seguir saliendo en los
+resultados. Se deja el rastreo abierto y se bloquea la indexación.
 
 ## Lo que no se ha replicado
 

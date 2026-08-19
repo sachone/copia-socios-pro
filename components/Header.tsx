@@ -49,6 +49,25 @@ export default function Header() {
     // asi que hay que apuntar al <nav> contenedor del menu movil.
     const dropdown = root.querySelector<HTMLElement>("nav.elementor-nav-menu--dropdown");
 
+    // El widget lleva la clase `elementor-nav-menu--stretch`: en el original,
+    // el desplegable del movil ocupa todo el ancho de la ventana. Pero quien
+    // lo estira es el JavaScript de Elementor, que este clon no carga (ver
+    // README), asi que el desplegable se quedaba tomando como referencia el
+    // boton de la hamburguesa -36 px de ancho, pegado al borde derecho- y se
+    // salia de la pantalla: de 375 px solo se veian los 71 ultimos, y con eso
+    // no habia forma de navegar.
+    //
+    // Se reproduce el mismo calculo que hace el original: ancho de la ventana,
+    // un desplazamiento negativo que lo devuelve al borde izquierdo, y bajarlo
+    // justo por debajo del boton.
+    const stretchDropdown = () => {
+      const widget = dropdown?.closest<HTMLElement>(".elementor-nav-menu--stretch");
+      if (!dropdown || !widget) return;
+      dropdown.style.width = `${document.documentElement.clientWidth}px`;
+      dropdown.style.left = `${-widget.getBoundingClientRect().left}px`;
+      dropdown.style.top = `${widget.offsetHeight}px`;
+    };
+
     const closeAll = () => {
       toggle?.classList.remove("elementor-active");
       toggle?.setAttribute("aria-expanded", "false");
@@ -58,6 +77,9 @@ export default function Header() {
     const onToggle = () => {
       if (!toggle || !dropdown) return;
       const open = !toggle.classList.contains("elementor-active");
+      // Se recalcula al abrir, no solo al montar: entre medias ha podido
+      // cambiar el ancho de la ventana o aparecer la barra de scroll.
+      if (open) stretchDropdown();
       toggle.classList.toggle("elementor-active", open);
       toggle.setAttribute("aria-expanded", String(open));
       dropdown.setAttribute("aria-hidden", String(!open));
@@ -83,6 +105,10 @@ export default function Header() {
       li.querySelector("a")?.setAttribute("aria-expanded", String(open));
     };
 
+    const onResize = () => stretchDropdown();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+
     toggle?.addEventListener("click", onToggle);
     toggle?.addEventListener("keydown", (e) => {
       const k = (e as KeyboardEvent).key;
@@ -94,7 +120,10 @@ export default function Header() {
     dropdown?.addEventListener("click", onDropdownClick);
 
     closeAll();
+    stretchDropdown();
     return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
       toggle?.removeEventListener("click", onToggle);
       dropdown?.removeEventListener("click", onDropdownClick);
     };
